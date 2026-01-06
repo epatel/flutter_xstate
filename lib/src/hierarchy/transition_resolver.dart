@@ -356,7 +356,37 @@ class TransitionResolver<TContext, TEvent extends XEvent> {
   }
 
   /// Find a state config by ID.
+  /// Supports dot-notation paths like "parent.child.grandchild".
   StateConfig<TContext, TEvent>? _findStateConfigById(String id) {
+    // Handle dot-notation paths (e.g., "checkout.processing")
+    if (id.contains('.')) {
+      final parts = id.split('.');
+      StateConfig<TContext, TEvent>? current = root;
+
+      for (final part in parts) {
+        if (current == null) return null;
+
+        // Search in current's children
+        StateConfig<TContext, TEvent>? found;
+        for (final child in current.states.values) {
+          if (child.id == part) {
+            found = child;
+            break;
+          }
+        }
+
+        if (found == null) {
+          // Try searching the entire subtree for the part
+          found = _searchStateConfig(current, part);
+        }
+
+        current = found;
+      }
+
+      return current;
+    }
+
+    // Simple ID without dots - search recursively
     return _searchStateConfig(root, id);
   }
 
