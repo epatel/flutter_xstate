@@ -28,6 +28,7 @@ flutter test test/tutorial/tutorial_03_test.dart
 | 6 | [step6_auth](step6_auth/) | Complete auth flow with async |
 | 7 | [step7_inspector](step7_inspector/) | Visual debugging panel |
 | 8 | [step8_multi_machine](step8_multi_machine/) | Multiple machines communicating |
+| 9 | [step9_structured](step9_structured/) | Structured project organization |
 
 Run any tutorial:
 
@@ -115,5 +116,6 @@ StateMachineSelector<MyContext, MyEvent, int>(
 6. **Apply with Step 6** - See a complete auth flow example
 7. **Debug with Step 7** - Use the visual inspector panel
 8. **Scale with Step 8** - Coordinate multiple state machines
+9. **Structure with Step 9** - Organize code for larger projects
 
 Happy state machining!
