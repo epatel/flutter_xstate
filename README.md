@@ -303,6 +303,7 @@ Learn step-by-step with the included tutorials:
 | 5 | [Todo App](tutorial/step5_todo/) | Flutter widgets, selectors |
 | 6 | [Auth Flow](tutorial/step6_auth/) | Compound states, async operations |
 | 7 | [Inspector](tutorial/step7_inspector/) | Visual debugging panel |
+| 8 | [Multi-Machine](tutorial/step8_multi_machine/) | Multiple machines communicating |
 
 Run any tutorial:
 
