@@ -9,76 +9,99 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Common Commands
 
 ```bash
-# Run tests
+# Run all tests
 flutter test
+
+# Run a single test file
+flutter test test/core/state_machine_test.dart
+
+# Run tests matching a name pattern
+flutter test --name "should transition"
 
 # Static analysis
 flutter analyze
 
+# Format code
+dart format .
+
 # Fetch dependencies
 flutter pub get
 
-# Format code
-dart format .
+# Run a tutorial app
+cd tutorial/step1_traffic_light && flutter run -d chrome
 ```
 
 ## Architecture
 
-### Library Structure
+### Module Structure
 
 ```
-lib/
-  flutter_xstate.dart              # Barrel export
-  src/
-    core/                          # Core state machine
-      state_machine.dart           # StateMachine<TContext, TEvent>
-      state_machine_actor.dart     # Running actor (ChangeNotifier)
-      state_snapshot.dart          # Immutable state snapshot
-      state_value.dart             # State identifier (sealed class)
-      state_config.dart            # State configuration
-      transition.dart              # Transition definition
-    events/
-      x_event.dart                 # Base event class
-    builder/
-      machine_builder.dart         # MachineBuilder fluent API
-      state_builder.dart           # StateBuilder fluent API
+lib/src/
+  core/           # StateMachine, Actor, Snapshot, StateValue, Transition
+  events/         # XEvent base class and built-in events
+  builder/        # MachineBuilder and StateBuilder fluent API
+  actions/        # Built-in actions (assign, raise, log, sendTo, etc.)
+  guards/         # Guard interface and combinators (and, or, not, etc.)
+  hierarchy/      # StateNode, HistoryManager, TransitionResolver
+  actors/         # ActorRef, ActorSystem, spawn, invoke
+  flutter/        # Provider, Builder, Selector, Listener, Consumer widgets
+  router/         # go_router integration (redirects, route-scoped machines)
+  delays/         # DelayedTransition (after, every)
+  persistence/    # StateMachinePersistence, adapters
+  devtools/       # StateMachineInspector, InspectorPanel
 ```
 
-### Key Concepts
+### Key Design Patterns
 
-- **StateMachine**: Pure definition of states, transitions, and actions (immutable)
-- **StateMachineActor**: Running instance that extends ChangeNotifier for provider
-- **StateSnapshot**: Immutable snapshot containing state value and context
-- **StateValue**: Sealed class for atomic, compound, or parallel states
-- **XEvent**: Base class for all events
-
-### Design Patterns
-
-- **Builder Pattern**: Fluent API for machine definition using cascade notation
+- **Immutable Definitions**: `StateMachine` is immutable; `StateMachineActor` is the mutable runtime
+- **Builder Pattern**: Fluent API using Dart cascade notation (`..`)
+- **Sealed Classes**: `StateValue` (Atomic/Compound/Parallel) for exhaustive pattern matching
 - **ChangeNotifier**: Actor extends ChangeNotifier for provider/go_router integration
-- **Sealed Classes**: StateValue uses sealed classes for exhaustive pattern matching
-- **Generics**: Type-safe context `TContext` and events `TEvent extends XEvent`
+- **Type-Safe Generics**: `StateMachine<TContext, TEvent extends XEvent>`
 
-## Implementation Phases
+### Core Flow
 
-See `/Users/epatel/.claude/plans/serialized-plotting-acorn.md` for the full roadmap.
+1. **Define**: `StateMachine.create()` builds immutable machine definition
+2. **Create Actor**: `machine.createActor()` creates runtime instance
+3. **Start**: `actor.start()` initializes to initial state
+4. **Send Events**: `actor.send(event)` triggers transitions
+5. **React**: Widgets rebuild via ChangeNotifier
 
-- **Phase 1** (Complete): Core state machine, events, builder API
-- **Phase 2**: Actions (assign, raise, log) and guards
-- **Phase 3**: Hierarchical and parallel states
-- **Phase 4**: Actor model (spawn, invoke)
-- **Phase 5**: Flutter/Provider widgets
-- **Phase 6**: go_router integration
-- **Phase 7**: Advanced features (delays, persistence)
+### State Value Types
+
+- `AtomicStateValue` - Simple state: `'idle'`
+- `CompoundStateValue` - Nested state: `'player.playing'`
+- `ParallelStateValue` - Concurrent regions: `{'bold': 'on', 'italic': 'off'}`
+
+### Transition Resolution
+
+Transitions are resolved in `TransitionResolver`:
+1. Find matching transition by event type and guards
+2. Calculate exit states (innermost to outermost)
+3. Execute exit actions
+4. Execute transition actions
+5. Calculate entry states (outermost to innermost)
+6. Execute entry actions
+7. Update history for compound states
 
 ## Dependencies
 
-- `provider` - State management and DI
-- `go_router` - Navigation with state-based redirects
-- `meta` - Annotations (@immutable, @internal)
-- `collection` - Collection utilities
+- `provider` ^6.1.0 - State management and DI
+- `go_router` ^14.0.0 - Navigation with state-based redirects
+- `meta` ^1.10.0 - Annotations (@immutable)
+- `collection` ^1.18.0 - Collection utilities
+- `mocktail` ^1.0.0 (dev) - Mocking for tests
 
-## Environment
+## Tutorials
 
-- Dart SDK: ^3.10.4
-- Flutter: stable channel
+Seven progressive tutorials in `tutorial/`:
+
+| Step | Topic | Key Concepts |
+|------|-------|--------------|
+| 1 | Traffic Light | States, events, transitions |
+| 2 | Counter | Context, actions, entry actions |
+| 3 | Door Lock | Guards, conditional transitions |
+| 4 | Media Player | Hierarchical/nested states |
+| 5 | Todo App | Flutter widgets, selectors |
+| 6 | Auth Flow | Compound states, async operations |
+| 7 | Inspector | Visual debugging panel |
