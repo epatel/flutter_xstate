@@ -1,10 +1,15 @@
-/// Step 6: Auth App - Complete Authentication Flow
+/// Step 6: Auth App - Authentication Flow State Machine
 ///
-/// Demonstrates:
+/// Demonstrates STATE MACHINE PATTERNS (not production auth):
 /// - Compound/hierarchical states (loggedOut.idle, loggedOut.submitting, etc.)
 /// - Async operations (simulated login)
-/// - Error handling
+/// - Error handling and recovery
 /// - Loading states
+///
+/// NOTE: This is a tutorial for learning state machines, NOT a secure auth
+/// implementation. For production apps, use proper auth services (Firebase Auth,
+/// Auth0, etc.), secure token storage (flutter_secure_storage), HTTPS, input
+/// validation, and rate limiting.
 ///
 /// Run with: flutter run -d chrome
 

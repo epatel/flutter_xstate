@@ -1,6 +1,8 @@
 # Step 6: Authentication Flow
 
-A complete authentication flow demonstrating compound states and async operations.
+Demonstrates **state machine patterns** for auth flows using compound states and async operations.
+
+> **Note**: This tutorial teaches state machine concepts, not production security. For real apps, use proper auth services (Firebase Auth, Auth0), secure token storage (`flutter_secure_storage`), HTTPS, input validation, and rate limiting.
 
 ## Run
 
