@@ -271,3 +271,5 @@ export 'src/devtools/state_machine_inspector.dart'
         InspectorStats,
         InspectorRegistry,
         InspectorExtension;
+export 'src/devtools/inspector_panel.dart'
+    show StateMachineInspectorPanel, InspectorOverlay;
