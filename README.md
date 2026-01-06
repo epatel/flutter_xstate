@@ -304,6 +304,7 @@ Learn step-by-step with the included tutorials:
 | 6 | [Auth Flow](tutorial/step6_auth/) | Compound states, async operations |
 | 7 | [Inspector](tutorial/step7_inspector/) | Visual debugging panel |
 | 8 | [Multi-Machine](tutorial/step8_multi_machine/) | Multiple machines communicating |
+| 9 | [Structured](tutorial/step9_structured/) | Project organization patterns |
 
 Run any tutorial:
 

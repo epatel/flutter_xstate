@@ -1,97 +1,142 @@
-# Step 7: Inspector Panel
+# Step 9: Structured Project Organization
 
-This tutorial demonstrates the **StateMachineInspectorPanel** - a visual debugging tool for state machines.
+This tutorial demonstrates best practices for organizing state machine code in larger projects.
 
 ## Run
 
 ```bash
-cd tutorial/step7_inspector
+cd tutorial/step9_structured
 flutter run -d chrome
 ```
 
-## Features Demonstrated
+## Key Concepts
 
-- **StateMachineInspectorPanel** - Visual debugging widget
-- **State Tree View** - See all states with current state highlighted
-- **Transition History** - Timeline of all state transitions
-- **Context View** - Live view of the context data
-- **Stats View** - Event counts and transition statistics
-- **Event Sender** - Send events directly to the state machine
+This is a refactored version of Step 7 (Inspector), with the single `main.dart` split into a clean file structure.
 
-## How to Use
-
-### 1. Browse Products
-Click product chips to add items to your cart. The state machine stays in `browsing` state.
-
-### 2. Checkout
-Click the **Checkout** button. The state transitions to `checkout.processing`.
-
-### 3. Simulate Payment Result
-The processing state waits for a payment result. **Use the Inspector Panel** to send the result:
-
-1. Click the **Events** tab in the inspector
-2. Click **PAYMENT_SUCCESS** to complete the order, or
-3. Click **PAYMENT_FAILURE** to simulate a failed payment
-
-This demonstrates the inspector's ability to send events for testing and debugging.
-
-### 4. Continue
-- After success: Cart is cleared, click **Continue Shopping**
-- After failure: Click **Retry Payment** or **Continue Shopping**
-
-## State Machine Structure
+### File Structure
 
 ```
-cart (compound)
-├── browsing (initial)
-│   └── handles: ADD_ITEM, REMOVE_ITEM, CHECKOUT, etc.
-└── checkout (compound)
-    ├── processing (initial)
-    │   └── handles: PAYMENT_SUCCESS, PAYMENT_FAILURE
-    ├── success
-    │   └── handles: CONTINUE_SHOPPING
-    └── failed
-        └── handles: RETRY_PAYMENT, CONTINUE_SHOPPING
+lib/
+├── main.dart                      # App entry point only
+├── machine/
+│   ├── cart_machine.dart          # Assembles machine from parts
+│   ├── models/
+│   │   ├── cart_item.dart         # CartItem model
+│   │   └── cart_context.dart      # CartContext model
+│   ├── events/
+│   │   └── cart_events.dart       # All event classes
+│   ├── states/
+│   │   ├── browsing_state.dart    # buildBrowsingState()
+│   │   └── checkout/              # Compound state subfolder
+│   │       ├── checkout_state.dart
+│   │       ├── processing_state.dart
+│   │       ├── success_state.dart
+│   │       └── failed_state.dart
+│   ├── actions/
+│   │   └── cart_actions.dart      # Static action methods
+│   └── guards/
+│       └── cart_guards.dart       # Static guard methods
+└── widgets/
+    ├── widgets.dart               # Barrel export
+    ├── inspector_demo_screen.dart
+    ├── cart_view.dart
+    └── ...                        # Other UI components
 ```
 
-## Inspector Panel Tabs
+## Patterns Demonstrated
 
-| Tab | Description |
-|-----|-------------|
-| **States** | Visual state tree with current state highlighted in green |
-| **History** | Timeline of transitions showing from → to states |
-| **Context** | Live display of the context object (cart items, totals) |
-| **Stats** | Event counts, state visit counts, transition metrics |
-| **Events** | Buttons to send events directly to the state machine |
+### 1. States as Callback Functions
 
-## Code Highlights
-
-### Setting up the Inspector Panel
+Each state is defined as a function that configures a `StateBuilder`:
 
 ```dart
-StateMachineInspectorPanel<CartContext, CartEvent>(
-  actor: actor,
-  machine: cartMachine,
-  eventBuilders: {
-    'ADD_ITEM': () => AddItemEvent(testItem),
-    'CHECKOUT': () => CheckoutEvent(),
-    'PAYMENT_SUCCESS': () => PaymentSuccessEvent(),
-    'PAYMENT_FAILURE': () => PaymentFailureEvent('Card declined'),
-  },
-)
+// states/browsing_state.dart
+void buildBrowsingState(StateBuilder<CartContext, CartEvent> s) {
+  s
+    ..on<AddItemEvent>(null, actions: [CartActions.addItem])
+    ..on<RemoveItemEvent>(null, actions: [CartActions.removeItem])
+    ..on<CheckoutEvent>('checkout.processing', guard: CartGuards.hasItems);
+}
 ```
 
-### Using InspectorOverlay (Alternative)
+### 2. Compound States in Subfolders
 
-For a floating debug button instead of a side panel:
+The `checkout` compound state has its children in a dedicated folder:
 
 ```dart
-InspectorOverlay<MyContext, MyEvent>(
-  actor: actor,
-  machine: machine,
-  child: MyApp(),
-)
+// states/checkout/checkout_state.dart
+void buildCheckoutState(StateBuilder<CartContext, CartEvent> s) {
+  s
+    ..initial('processing')
+    ..on<ContinueShoppingEvent>('browsing')  // Parent-level handler
+    ..state('processing', buildProcessingState)
+    ..state('success', buildSuccessState)
+    ..state('failed', buildFailedState);
+}
 ```
+
+### 3. Actions as Static Methods
+
+Actions are grouped in a class for reusability:
+
+```dart
+// actions/cart_actions.dart
+abstract final class CartActions {
+  static CartContext addItem(CartContext ctx, CartEvent event) {
+    final e = event as AddItemEvent;
+    // ... add item logic
+    return ctx.copyWith(items: [...ctx.items, e.item]);
+  }
+
+  static CartContext clearCart(CartContext ctx, CartEvent _) {
+    return ctx.copyWith(items: [], clearPromo: true, discount: 0);
+  }
+}
+```
+
+### 4. Guards as Static Methods
+
+Guards are similarly organized:
+
+```dart
+// guards/cart_guards.dart
+abstract final class CartGuards {
+  static bool hasItems(CartContext ctx, CartEvent _) {
+    return ctx.items.isNotEmpty;
+  }
+}
+```
+
+### 5. Machine Assembly
+
+The machine definition becomes clean and declarative:
+
+```dart
+// cart_machine.dart
+final cartMachine = StateMachine.create<CartContext, CartEvent>(
+  (m) => m
+    ..context(const CartContext())
+    ..initial('browsing')
+    ..state('browsing', buildBrowsingState)
+    ..state('checkout', buildCheckoutState),
+  id: 'cart',
+);
+```
+
+## Benefits
+
+- **Separation of concerns** - Models, events, states, actions, guards, widgets in dedicated folders
+- **Reusability** - Actions and guards can be shared across states
+- **Testability** - Each piece can be unit tested in isolation
+- **Scalability** - Easy to add new states, events, or actions
+- **Discoverability** - File structure mirrors the state machine structure
+
+## When to Use This Pattern
+
+- Projects with more than 2-3 states
+- State machines with complex actions or guards
+- Teams working on the same codebase
+- When you want to unit test state machine logic separately
 
 ## Promo Codes
 
