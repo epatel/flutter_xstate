@@ -129,7 +129,7 @@ Action<TContext, TEvent> log<TContext, TEvent extends XEvent>(
 Action<TContext, TEvent> logMessage<TContext, TEvent extends XEvent>(
   String message,
 ) {
-  return LogAction<TContext, TEvent>((_, _event) => message);
+  return LogAction<TContext, TEvent>((_, _) => message);
 }
 
 /// An action that logs a message.

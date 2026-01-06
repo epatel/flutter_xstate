@@ -5,7 +5,6 @@ import '../core/state_snapshot.dart';
 import '../core/state_value.dart';
 import '../core/transition.dart';
 import '../events/x_event.dart';
-import 'history_state.dart';
 import 'state_node.dart';
 
 /// Result of resolving a transition.
@@ -375,10 +374,8 @@ class TransitionResolver<TContext, TEvent extends XEvent> {
           }
         }
 
-        if (found == null) {
-          // Try searching the entire subtree for the part
-          found = _searchStateConfig(current, part);
-        }
+        // Try searching the entire subtree for the part
+        found ??= _searchStateConfig(current, part);
 
         current = found;
       }

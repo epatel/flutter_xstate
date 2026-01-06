@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import '../core/state_snapshot.dart';
 import '../events/x_event.dart';
 
 /// Configuration for a delayed transition.

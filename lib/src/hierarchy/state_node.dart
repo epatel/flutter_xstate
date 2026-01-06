@@ -95,7 +95,7 @@ class StateHierarchy {
           _collectConfigs(child, childConfig, result);
         }
 
-      case ParallelStateValue(:final regions):
+      case ParallelStateValue():
         // For parallel states, we add the parallel config but don't recurse
         // since multiple regions are active simultaneously
         // The regions are handled separately

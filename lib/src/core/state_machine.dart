@@ -238,61 +238,6 @@ class StateMachine<TContext, TEvent extends XEvent> {
     );
   }
 
-  /// Resolve the target state value, handling compound states.
-  StateValue _resolveTargetValue(
-    String targetId,
-    StateConfig<TContext, TEvent> targetConfig,
-  ) {
-    // Check if target is nested (contains dot)
-    if (targetId.contains('.')) {
-      return _resolveNestedTarget(targetId);
-    }
-
-    // For targets that are direct children of the root compound state,
-    // we need to wrap them in the root compound structure
-    if (root.isCompound && root.states.containsKey(targetId)) {
-      final targetValue = _resolveInitialValue(targetConfig);
-      return CompoundStateValue(root.id, targetValue);
-    }
-
-    // Simple target (this case handles nested targets found elsewhere)
-    return _resolveInitialValue(targetConfig);
-  }
-
-  /// Resolve a nested target like 'parent.child'.
-  StateValue _resolveNestedTarget(String targetId) {
-    final parts = targetId.split('.');
-    StateConfig<TContext, TEvent>? current = root;
-    final values = <String>[];
-
-    for (final part in parts) {
-      if (current == null) {
-        throw StateError('State "$part" not found in path "$targetId"');
-      }
-
-      if (current.id == part || part == parts.first && root.id != part) {
-        // Either we're at the right state, or looking for a child
-        final child = current.states[part];
-        if (child != null) {
-          current = child;
-          values.add(part);
-        } else if (current.id != part) {
-          throw StateError('State "$part" not found in path "$targetId"');
-        }
-      } else {
-        final child = current.states[part];
-        if (child == null) {
-          throw StateError('State "$part" not found in path "$targetId"');
-        }
-        current = child;
-        values.add(part);
-      }
-    }
-
-    // Build the state value from the path
-    return _resolveInitialValue(current!);
-  }
-
   /// Get all active state configs from outermost to innermost.
   List<StateConfig<TContext, TEvent>> _getActiveStateConfigs(
     StateValue value,

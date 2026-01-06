@@ -8,7 +8,6 @@
 /// - Progress reporting between actors
 ///
 /// Run with: flutter run -d chrome
-library;
 
 import 'dart:async';
 import 'package:flutter/material.dart';

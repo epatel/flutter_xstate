@@ -127,7 +127,7 @@ void main() {
     });
 
     test('does not modify context', () {
-      final action = log<TestContext, TestEvent>((_, __) => 'test');
+      final action = log<TestContext, TestEvent>((_, _) => 'test');
 
       final result = action.execute(
         const TestContext(count: 5),
@@ -198,7 +198,7 @@ void main() {
     test('executes side effect', () {
       var sideEffectCalled = false;
 
-      final action = pure<TestContext, TestEvent>((_, __) {
+      final action = pure<TestContext, TestEvent>((_, _) {
         sideEffectCalled = true;
       });
 
@@ -208,7 +208,7 @@ void main() {
     });
 
     test('does not modify context', () {
-      final action = pure<TestContext, TestEvent>((_, __) {});
+      final action = pure<TestContext, TestEvent>((_, _) {});
 
       final result = action.execute(
         const TestContext(count: 5),
