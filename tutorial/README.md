@@ -18,24 +18,23 @@ flutter test test/tutorial/tutorial_03_test.dart
 
 ## Tutorial Steps
 
-### Console Examples (run with flutter test)
-
-| Step | Test File | Topic |
+| Step | Directory | Topic |
 |------|-----------|-------|
-| 1 | `test/tutorial/tutorial_01_test.dart` | Basic state machines, events, transitions |
-| 2 | `test/tutorial/tutorial_02_test.dart` | Context, actions, entry/exit hooks |
-| 3 | `test/tutorial/tutorial_03_test.dart` | Guards and conditional transitions |
+| 1 | [step1_traffic_light](step1_traffic_light/) | Basic state machines, events, transitions |
+| 2 | [step2_counter](step2_counter/) | Context, actions, entry/exit hooks |
+| 3 | [step3_door_lock](step3_door_lock/) | Guards and conditional transitions |
+| 4 | [step4_hierarchical](step4_hierarchical/) | Nested/hierarchical states |
+| 5 | [step5_todo](step5_todo/) | Flutter widgets, selectors |
+| 6 | [step6_auth](step6_auth/) | Complete auth flow with async |
+| 7 | [step7_inspector](step7_inspector/) | Visual debugging panel |
+| 8 | [step8_multi_machine](step8_multi_machine/) | Multiple machines communicating |
 
-### Reference Files (read & copy)
+Run any tutorial:
 
-| Step | File | Topic |
-|------|------|-------|
-| 1 | `tutorial/01_first_state_machine.dart` | Events, states, transitions, actors |
-| 2 | `tutorial/02_context_and_actions.dart` | Context data, actions, entry/exit |
-| 3 | `tutorial/03_guards.dart` | Guards, combinators (and/or/not) |
-| 4 | `tutorial/04_hierarchical_states.dart` | Nested states, parent transitions |
-| 5 | `tutorial/05_flutter_widgets.dart` | Provider, Consumer, Builder, Selector |
-| 6 | `tutorial/06_auth_example.dart` | Complete auth flow with UI |
+```bash
+cd tutorial/step1_traffic_light
+flutter run -d chrome
+```
 
 ## Quick Start
 
@@ -113,6 +112,8 @@ StateMachineSelector<MyContext, MyEvent, int>(
 3. **Control flow with Step 3** - Master guards for conditional logic
 4. **Organize with Step 4** - Build hierarchical state machines
 5. **Integrate with Step 5** - Connect to your Flutter UI
-6. **Apply with Step 6** - See a complete real-world example
+6. **Apply with Step 6** - See a complete auth flow example
+7. **Debug with Step 7** - Use the visual inspector panel
+8. **Scale with Step 8** - Coordinate multiple state machines
 
 Happy state machining!
