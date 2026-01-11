@@ -42,8 +42,7 @@ stateDiagram-v2
     }
 
     active --> stopped : STOP
-    active --> active : SEEK
-    active --> active : VOLUME
+    active --> active : SEEK / VOLUME
 ```
 
 ```

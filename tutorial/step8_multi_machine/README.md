@@ -115,8 +115,7 @@ stateDiagram-v2
     waitingForDownload --> browsing : REQUEST_CANCEL
     waitingForDownload --> showingResult : DOWNLOAD_COMPLETED
     waitingForDownload --> showingError : DOWNLOAD_ERROR
-    showingResult --> browsing : DISMISS_DIALOG
-    showingResult --> browsing : SELECT_FILE
+    showingResult --> browsing : DISMISS / SELECT_FILE
     showingError --> waitingForDownload : REQUEST_RETRY
     showingError --> browsing : RESET_UI
 ```

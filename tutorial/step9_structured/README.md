@@ -18,8 +18,7 @@ This is a refactored version of Step 7 (Inspector), with the single `main.dart` 
 ```mermaid
 stateDiagram-v2
     [*] --> browsing
-    browsing --> browsing : ADD_ITEM
-    browsing --> browsing : REMOVE_ITEM
+    browsing --> browsing : ADD / REMOVE item
     browsing --> checkout : CHECKOUT
 
     state checkout {

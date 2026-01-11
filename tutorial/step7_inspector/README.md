@@ -44,8 +44,7 @@ This demonstrates the inspector's ability to send events for testing and debuggi
 ```mermaid
 stateDiagram-v2
     [*] --> browsing
-    browsing --> browsing : ADD_ITEM
-    browsing --> browsing : REMOVE_ITEM
+    browsing --> browsing : ADD / REMOVE item
     browsing --> checkout : CHECKOUT
 
     state checkout {

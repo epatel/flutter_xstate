@@ -30,13 +30,9 @@ flutter run -d chrome
 ```mermaid
 stateDiagram-v2
     [*] --> idle
-    idle --> idle : ADD_TODO
-    idle --> idle : REMOVE_TODO
-    idle --> idle : TOGGLE_TODO
-    idle --> idle : CLEAR_COMPLETED
+    idle --> idle : ADD / REMOVE / TOGGLE / CLEAR
     idle --> editing : START_EDIT
-    editing --> idle : SAVE_EDIT
-    editing --> idle : CANCEL_EDIT
+    editing --> idle : SAVE / CANCEL
 ```
 
 ```
