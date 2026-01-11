@@ -14,11 +14,7 @@ class CartContext {
     this.status = 'empty',
   });
 
-  CartContext copyWith({
-    int? itemCount,
-    double? totalPrice,
-    String? status,
-  }) =>
+  CartContext copyWith({int? itemCount, double? totalPrice, String? status}) =>
       CartContext(
         itemCount: itemCount ?? this.itemCount,
         totalPrice: totalPrice ?? this.totalPrice,
@@ -51,16 +47,25 @@ void main() {
       (m) => m
         ..context(const CartContext())
         ..initial('active')
-        ..state('active', (s) => s
-          ..on<AddItemEvent>('active', actions: [
-            (ctx, event) => ctx.copyWith(
+        ..state(
+          'active',
+          (s) => s
+            ..on<AddItemEvent>(
+              'active',
+              actions: [
+                (ctx, event) => ctx.copyWith(
                   itemCount: ctx.itemCount + 1,
                   totalPrice: ctx.totalPrice + (event as AddItemEvent).price,
                 ),
-          ])
-          ..on<UpdateStatusEvent>('active', actions: [
-            (ctx, event) => ctx.copyWith(status: (event as UpdateStatusEvent).status),
-          ])
+              ],
+            )
+            ..on<UpdateStatusEvent>(
+              'active',
+              actions: [
+                (ctx, event) =>
+                    ctx.copyWith(status: (event as UpdateStatusEvent).status),
+              ],
+            ),
         ),
       id: 'cart',
     );
@@ -203,9 +208,7 @@ void main() {
         (m) => m
           ..context(const CartContext())
           ..initial('loading')
-          ..state('loading', (s) => s
-            ..on<UpdateStatusEvent>('ready')
-          )
+          ..state('loading', (s) => s..on<UpdateStatusEvent>('ready'))
           ..state('ready', (s) {}),
         id: 'cart',
       );

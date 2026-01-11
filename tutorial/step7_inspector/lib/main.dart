@@ -30,11 +30,11 @@ class CartItem {
   });
 
   CartItem copyWith({int? quantity}) => CartItem(
-        id: id,
-        name: name,
-        price: price,
-        quantity: quantity ?? this.quantity,
-      );
+    id: id,
+    name: name,
+    price: price,
+    quantity: quantity ?? this.quantity,
+  );
 
   double get total => price * quantity;
 }
@@ -59,13 +59,12 @@ class CartContext {
     String? error,
     bool clearError = false,
     bool clearPromo = false,
-  }) =>
-      CartContext(
-        items: items ?? this.items,
-        promoCode: clearPromo ? null : (promoCode ?? this.promoCode),
-        discount: discount ?? this.discount,
-        error: clearError ? null : (error ?? this.error),
-      );
+  }) => CartContext(
+    items: items ?? this.items,
+    promoCode: clearPromo ? null : (promoCode ?? this.promoCode),
+    discount: discount ?? this.discount,
+    error: clearError ? null : (error ?? this.error),
+  );
 
   double get subtotal => items.fold(0, (sum, item) => sum + item.total);
   double get total => subtotal * (1 - discount);
@@ -169,114 +168,138 @@ final cartMachine = StateMachine.create<CartContext, CartEvent>(
   (m) => m
     ..context(const CartContext())
     ..initial('browsing')
-
     // BROWSING - Adding items to cart
     ..state(
       'browsing',
       (s) => s
-        ..on<AddItemEvent>(null, actions: [
-          (ctx, event) {
-            final e = event as AddItemEvent;
-            final existing = ctx.items.indexWhere((i) => i.id == e.item.id);
-            if (existing >= 0) {
-              final updated = ctx.items.map((i) {
-                if (i.id == e.item.id) {
-                  return i.copyWith(quantity: i.quantity + 1);
-                }
-                return i;
-              }).toList();
-              return ctx.copyWith(items: updated);
-            }
-            return ctx.copyWith(items: [...ctx.items, e.item]);
-          },
-        ])
-        ..on<RemoveItemEvent>(null, actions: [
-          (ctx, event) {
-            final e = event as RemoveItemEvent;
-            return ctx.copyWith(
-              items: ctx.items.where((i) => i.id != e.itemId).toList(),
-            );
-          },
-        ])
-        ..on<UpdateQuantityEvent>(null, actions: [
-          (ctx, event) {
-            final e = event as UpdateQuantityEvent;
-            if (e.quantity <= 0) {
+        ..on<AddItemEvent>(
+          null,
+          actions: [
+            (ctx, event) {
+              final e = event as AddItemEvent;
+              final existing = ctx.items.indexWhere((i) => i.id == e.item.id);
+              if (existing >= 0) {
+                final updated = ctx.items.map((i) {
+                  if (i.id == e.item.id) {
+                    return i.copyWith(quantity: i.quantity + 1);
+                  }
+                  return i;
+                }).toList();
+                return ctx.copyWith(items: updated);
+              }
+              return ctx.copyWith(items: [...ctx.items, e.item]);
+            },
+          ],
+        )
+        ..on<RemoveItemEvent>(
+          null,
+          actions: [
+            (ctx, event) {
+              final e = event as RemoveItemEvent;
               return ctx.copyWith(
                 items: ctx.items.where((i) => i.id != e.itemId).toList(),
               );
-            }
-            return ctx.copyWith(
-              items: ctx.items.map((i) {
-                if (i.id == e.itemId) {
-                  return i.copyWith(quantity: e.quantity);
-                }
-                return i;
-              }).toList(),
-            );
-          },
-        ])
-        ..on<ApplyPromoEvent>(null, actions: [
-          (ctx, event) {
-            final e = event as ApplyPromoEvent;
-            // Simple promo code validation
-            if (e.code.toUpperCase() == 'SAVE10') {
-              return ctx.copyWith(promoCode: e.code, discount: 0.10, clearError: true);
-            } else if (e.code.toUpperCase() == 'SAVE20') {
-              return ctx.copyWith(promoCode: e.code, discount: 0.20, clearError: true);
-            }
-            return ctx.copyWith(error: 'Invalid promo code');
-          },
-        ])
-        ..on<RemovePromoEvent>(null, actions: [
-          (ctx, _) => ctx.copyWith(clearPromo: true, discount: 0),
-        ])
-        ..on<ClearCartEvent>(null, actions: [
-          (ctx, _) => ctx.copyWith(items: [], clearPromo: true, discount: 0),
-        ])
+            },
+          ],
+        )
+        ..on<UpdateQuantityEvent>(
+          null,
+          actions: [
+            (ctx, event) {
+              final e = event as UpdateQuantityEvent;
+              if (e.quantity <= 0) {
+                return ctx.copyWith(
+                  items: ctx.items.where((i) => i.id != e.itemId).toList(),
+                );
+              }
+              return ctx.copyWith(
+                items: ctx.items.map((i) {
+                  if (i.id == e.itemId) {
+                    return i.copyWith(quantity: e.quantity);
+                  }
+                  return i;
+                }).toList(),
+              );
+            },
+          ],
+        )
+        ..on<ApplyPromoEvent>(
+          null,
+          actions: [
+            (ctx, event) {
+              final e = event as ApplyPromoEvent;
+              // Simple promo code validation
+              if (e.code.toUpperCase() == 'SAVE10') {
+                return ctx.copyWith(
+                  promoCode: e.code,
+                  discount: 0.10,
+                  clearError: true,
+                );
+              } else if (e.code.toUpperCase() == 'SAVE20') {
+                return ctx.copyWith(
+                  promoCode: e.code,
+                  discount: 0.20,
+                  clearError: true,
+                );
+              }
+              return ctx.copyWith(error: 'Invalid promo code');
+            },
+          ],
+        )
+        ..on<RemovePromoEvent>(
+          null,
+          actions: [(ctx, _) => ctx.copyWith(clearPromo: true, discount: 0)],
+        )
+        ..on<ClearCartEvent>(
+          null,
+          actions: [
+            (ctx, _) => ctx.copyWith(items: [], clearPromo: true, discount: 0),
+          ],
+        )
         ..on<CheckoutEvent>(
           'checkout.processing',
           guard: (ctx, _) => ctx.items.isNotEmpty,
         ),
     )
-
     // CHECKOUT - Compound state
     ..state(
       'checkout',
       (s) => s
         ..initial('processing')
         ..on<ContinueShoppingEvent>('browsing')
-
         // Processing payment
         ..state(
           'processing',
           (child) => child
             ..on<PaymentSuccessEvent>('checkout.success')
-            ..on<PaymentFailureEvent>('checkout.failed', actions: [
-              (ctx, event) {
-                final e = event as PaymentFailureEvent;
-                return ctx.copyWith(error: e.error);
-              },
-            ]),
+            ..on<PaymentFailureEvent>(
+              'checkout.failed',
+              actions: [
+                (ctx, event) {
+                  final e = event as PaymentFailureEvent;
+                  return ctx.copyWith(error: e.error);
+                },
+              ],
+            ),
         )
-
         // Payment succeeded
         ..state(
           'success',
           (child) => child
             ..entry([
-              (ctx, _) => ctx.copyWith(items: [], clearPromo: true, discount: 0),
+              (ctx, _) =>
+                  ctx.copyWith(items: [], clearPromo: true, discount: 0),
             ])
             ..on<ContinueShoppingEvent>('browsing'),
         )
-
         // Payment failed
         ..state(
           'failed',
           (child) => child
-            ..on<RetryPaymentEvent>('checkout.processing', actions: [
-              (ctx, _) => ctx.copyWith(clearError: true),
-            ]),
+            ..on<RetryPaymentEvent>(
+              'checkout.processing',
+              actions: [(ctx, _) => ctx.copyWith(clearError: true)],
+            ),
         ),
     ),
   id: 'cart',
@@ -335,7 +358,9 @@ class _InspectorDemoScreenState extends State<InspectorDemoScreen> {
         title: const Text('Step 7: Inspector Panel'),
         actions: [
           IconButton(
-            icon: Icon(_showInspector ? Icons.visibility_off : Icons.visibility),
+            icon: Icon(
+              _showInspector ? Icons.visibility_off : Icons.visibility,
+            ),
             tooltip: _showInspector ? 'Hide Inspector' : 'Show Inspector',
             onPressed: () => setState(() => _showInspector = !_showInspector),
           ),
@@ -344,10 +369,7 @@ class _InspectorDemoScreenState extends State<InspectorDemoScreen> {
       body: Row(
         children: [
           // Main app content
-          Expanded(
-            flex: 2,
-            child: _CartView(),
-          ),
+          Expanded(flex: 2, child: _CartView()),
           // Inspector panel
           if (_showInspector && _cartActor != null)
             Expanded(
@@ -358,15 +380,18 @@ class _InspectorDemoScreenState extends State<InspectorDemoScreen> {
                   actor: _cartActor!,
                   machine: cartMachine,
                   eventBuilders: {
-                    'ADD_ITEM': () => AddItemEvent(const CartItem(
-                          id: 'test',
-                          name: 'Test Item',
-                          price: 9.99,
-                        )),
+                    'ADD_ITEM': () => AddItemEvent(
+                      const CartItem(
+                        id: 'test',
+                        name: 'Test Item',
+                        price: 9.99,
+                      ),
+                    ),
                     'CLEAR_CART': () => ClearCartEvent(),
                     'CHECKOUT': () => CheckoutEvent(),
                     'PAYMENT_SUCCESS': () => PaymentSuccessEvent(),
-                    'PAYMENT_FAILURE': () => PaymentFailureEvent('Card declined'),
+                    'PAYMENT_FAILURE': () =>
+                        PaymentFailureEvent('Card declined'),
                     'RETRY_PAYMENT': () => RetryPaymentEvent(),
                     'CONTINUE': () => ContinueShoppingEvent(),
                   },
@@ -411,7 +436,10 @@ class _CartView extends StatelessWidget {
 
               // Product list (only when browsing)
               if (isBrowsing) ...[
-                Text('Products', style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  'Products',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: 8),
                 _ProductGrid(send: send),
                 const SizedBox(height: 24),
@@ -442,23 +470,30 @@ class _CartView extends StatelessWidget {
                   child: Center(
                     child: Column(
                       children: [
-                        Icon(Icons.shopping_cart_outlined,
-                            size: 48, color: Colors.grey[600]),
+                        Icon(
+                          Icons.shopping_cart_outlined,
+                          size: 48,
+                          color: Colors.grey[600],
+                        ),
                         const SizedBox(height: 8),
-                        Text('Cart is empty',
-                            style: TextStyle(color: Colors.grey[500])),
+                        Text(
+                          'Cart is empty',
+                          style: TextStyle(color: Colors.grey[500]),
+                        ),
                       ],
                     ),
                   ),
                 )
               else
-                ...ctx.items.map((item) => _CartItemTile(
-                      item: item,
-                      enabled: isBrowsing,
-                      onRemove: () => send(RemoveItemEvent(item.id)),
-                      onUpdateQuantity: (q) =>
-                          send(UpdateQuantityEvent(item.id, q)),
-                    )),
+                ...ctx.items.map(
+                  (item) => _CartItemTile(
+                    item: item,
+                    enabled: isBrowsing,
+                    onRemove: () => send(RemoveItemEvent(item.id)),
+                    onUpdateQuantity: (q) =>
+                        send(UpdateQuantityEvent(item.id, q)),
+                  ),
+                ),
 
               // Promo code (only when browsing with items)
               if (isBrowsing && ctx.items.isNotEmpty) ...[
@@ -578,7 +613,10 @@ class _StatusBanner extends StatelessWidget {
         children: [
           Icon(icon, color: color),
           const SizedBox(width: 12),
-          Text(text, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+          Text(
+            text,
+            style: TextStyle(color: color, fontWeight: FontWeight.bold),
+          ),
         ],
       ),
     );
@@ -641,7 +679,10 @@ class _CartItemTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  item.name,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
                 Text(
                   '\$${item.price.toStringAsFixed(2)} each',
                   style: TextStyle(color: Colors.grey[500], fontSize: 12),
@@ -784,8 +825,10 @@ class _OrderSummary extends StatelessWidget {
             const SizedBox(height: 8),
             Row(
               children: [
-                Text('Discount (${(ctx.discount * 100).toInt()}%)',
-                    style: const TextStyle(color: Colors.green)),
+                Text(
+                  'Discount (${(ctx.discount * 100).toInt()}%)',
+                  style: const TextStyle(color: Colors.green),
+                ),
                 const Spacer(),
                 Text(
                   '-\$${(ctx.subtotal * ctx.discount).toStringAsFixed(2)}',
@@ -797,12 +840,17 @@ class _OrderSummary extends StatelessWidget {
           const Divider(height: 24),
           Row(
             children: [
-              const Text('Total',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              const Text(
+                'Total',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
               const Spacer(),
               Text(
                 '\$${ctx.total.toStringAsFixed(2)}',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
               ),
             ],
           ),

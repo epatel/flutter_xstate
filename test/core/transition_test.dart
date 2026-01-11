@@ -5,8 +5,7 @@ class TestContext {
   final int count;
   const TestContext({this.count = 0});
 
-  TestContext copyWith({int? count}) =>
-      TestContext(count: count ?? this.count);
+  TestContext copyWith({int? count}) => TestContext(count: count ?? this.count);
 }
 
 class TestEvent extends XEvent {
@@ -17,28 +16,19 @@ class TestEvent extends XEvent {
 void main() {
   group('Transition', () {
     test('stores target', () {
-      const transition = Transition<TestContext, TestEvent>(
-        target: 'active',
-      );
+      const transition = Transition<TestContext, TestEvent>(target: 'active');
       expect(transition.target, equals('active'));
     });
 
     test('null target means self-transition', () {
-      const transition = Transition<TestContext, TestEvent>(
-        target: null,
-      );
+      const transition = Transition<TestContext, TestEvent>(target: null);
       expect(transition.target, isNull);
     });
 
     test('isEnabled returns true when no guard', () {
-      const transition = Transition<TestContext, TestEvent>(
-        target: 'active',
-      );
+      const transition = Transition<TestContext, TestEvent>(target: 'active');
 
-      expect(
-        transition.isEnabled(const TestContext(), TestEvent()),
-        isTrue,
-      );
+      expect(transition.isEnabled(const TestContext(), TestEvent()), isTrue);
     });
 
     test('isEnabled checks guard condition', () {
@@ -60,9 +50,7 @@ void main() {
     test('executeActions updates context', () {
       final transition = Transition<TestContext, TestEvent>(
         target: 'active',
-        actions: [
-          (ctx, _) => ctx.copyWith(count: ctx.count + 1),
-        ],
+        actions: [(ctx, _) => ctx.copyWith(count: ctx.count + 1)],
       );
 
       final result = transition.executeActions(
@@ -93,9 +81,7 @@ void main() {
     });
 
     test('internal flag defaults to false', () {
-      const transition = Transition<TestContext, TestEvent>(
-        target: 'active',
-      );
+      const transition = Transition<TestContext, TestEvent>(target: 'active');
       expect(transition.internal, isFalse);
     });
 
@@ -116,9 +102,7 @@ void main() {
     });
 
     test('toString provides readable output', () {
-      const transition = Transition<TestContext, TestEvent>(
-        target: 'active',
-      );
+      const transition = Transition<TestContext, TestEvent>(target: 'active');
       expect(transition.toString(), contains('active'));
     });
   });

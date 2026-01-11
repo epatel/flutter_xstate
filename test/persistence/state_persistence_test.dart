@@ -7,23 +7,19 @@ class UserContext {
   final int age;
   final bool isVerified;
 
-  const UserContext({
-    this.name = '',
-    this.age = 0,
-    this.isVerified = false,
-  });
+  const UserContext({this.name = '', this.age = 0, this.isVerified = false});
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'age': age,
-        'isVerified': isVerified,
-      };
+    'name': name,
+    'age': age,
+    'isVerified': isVerified,
+  };
 
   factory UserContext.fromJson(Map<String, dynamic> json) => UserContext(
-        name: json['name'] as String? ?? '',
-        age: json['age'] as int? ?? 0,
-        isVerified: json['isVerified'] as bool? ?? false,
-      );
+    name: json['name'] as String? ?? '',
+    age: json['age'] as int? ?? 0,
+    isVerified: json['isVerified'] as bool? ?? false,
+  );
 
   UserContext copyWith({String? name, int? age, bool? isVerified}) =>
       UserContext(
@@ -141,13 +137,10 @@ void main() {
     });
 
     test('serializes parallel state value', () {
-      final value = ParallelStateValue(
-        'parallel',
-        {
-          'region1': const AtomicStateValue('state1'),
-          'region2': const AtomicStateValue('state2'),
-        },
-      );
+      final value = ParallelStateValue('parallel', {
+        'region1': const AtomicStateValue('state1'),
+        'region2': const AtomicStateValue('state2'),
+      });
       final json = StateValueSerializer.serialize(value);
 
       expect(json['type'], equals('parallel'));
@@ -202,11 +195,7 @@ void main() {
 
       await adapter.save(
         'key1',
-        SerializedSnapshot(
-          value: {},
-          context: {},
-          timestamp: DateTime.now(),
-        ),
+        SerializedSnapshot(value: {}, context: {}, timestamp: DateTime.now()),
       );
       expect(await adapter.exists('key1'), isTrue);
     });
@@ -215,11 +204,7 @@ void main() {
       final adapter = InMemoryPersistenceAdapter();
       await adapter.save(
         'key1',
-        SerializedSnapshot(
-          value: {},
-          context: {},
-          timestamp: DateTime.now(),
-        ),
+        SerializedSnapshot(value: {}, context: {}, timestamp: DateTime.now()),
       );
 
       await adapter.delete('key1');
@@ -255,10 +240,14 @@ void main() {
           ..initial('idle')
           ..state(
             'idle',
-            (s) => s..on<UpdateNameEvent>('active', actions: [
-              (ctx, event) =>
-                  ctx.copyWith(name: (event as UpdateNameEvent).name),
-            ]),
+            (s) => s
+              ..on<UpdateNameEvent>(
+                'active',
+                actions: [
+                  (ctx, event) =>
+                      ctx.copyWith(name: (event as UpdateNameEvent).name),
+                ],
+              ),
           )
           ..state('active', (s) {}),
         id: 'user',

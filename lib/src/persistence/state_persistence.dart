@@ -63,13 +63,13 @@ class SerializedSnapshot {
 
   /// Convert to JSON map.
   Map<String, dynamic> toJson() => {
-        'value': value,
-        'context': context,
-        'eventType': eventType,
-        'timestamp': timestamp.toIso8601String(),
-        'machineId': machineId,
-        'version': version,
-      };
+    'value': value,
+    'context': context,
+    'eventType': eventType,
+    'timestamp': timestamp.toIso8601String(),
+    'machineId': machineId,
+    'version': version,
+  };
 
   /// Create from JSON map.
   factory SerializedSnapshot.fromJson(Map<String, dynamic> json) {
@@ -99,10 +99,7 @@ class StateValueSerializer {
   /// Serialize a state value to JSON.
   static Map<String, dynamic> serialize(StateValue value) {
     if (value is AtomicStateValue) {
-      return {
-        'type': 'atomic',
-        'id': value.id,
-      };
+      return {'type': 'atomic', 'id': value.id};
     } else if (value is CompoundStateValue) {
       return {
         'type': 'compound',
@@ -113,8 +110,9 @@ class StateValueSerializer {
       return {
         'type': 'parallel',
         'id': value.id,
-        'regions': value.regions
-            .map((key, value) => MapEntry(key, serialize(value))),
+        'regions': value.regions.map(
+          (key, value) => MapEntry(key, serialize(value)),
+        ),
       };
     }
     throw ArgumentError('Unknown state value type: ${value.runtimeType}');
@@ -137,10 +135,8 @@ class StateValueSerializer {
         return ParallelStateValue(
           json['id'] as String,
           regionsJson.map(
-            (key, value) => MapEntry(
-              key,
-              deserialize(value as Map<String, dynamic>),
-            ),
+            (key, value) =>
+                MapEntry(key, deserialize(value as Map<String, dynamic>)),
           ),
         );
       default:
@@ -241,8 +237,11 @@ class StateMachinePersistence<TContext, TEvent extends XEvent> {
   final int version;
 
   /// Optional migration function for version upgrades.
-  final SerializedSnapshot Function(SerializedSnapshot snapshot, int fromVersion)?
-      migrator;
+  final SerializedSnapshot Function(
+    SerializedSnapshot snapshot,
+    int fromVersion,
+  )?
+  migrator;
 
   StateMachinePersistence({
     required this.adapter,

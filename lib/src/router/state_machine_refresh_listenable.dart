@@ -36,7 +36,8 @@ class StateMachineRefreshListenable<TContext, TEvent extends XEvent>
   final bool Function(
     StateSnapshot<TContext> previous,
     StateSnapshot<TContext> current,
-  )? _shouldNotify;
+  )?
+  _shouldNotify;
 
   /// The previous state snapshot.
   StateSnapshot<TContext>? _previousSnapshot;
@@ -50,7 +51,8 @@ class StateMachineRefreshListenable<TContext, TEvent extends XEvent>
     bool Function(
       StateSnapshot<TContext> previous,
       StateSnapshot<TContext> current,
-    )? shouldNotify,
+    )?
+    shouldNotify,
   }) : _shouldNotify = shouldNotify {
     _previousSnapshot = _actor.snapshot;
     _actor.addListener(_onStateChange);
@@ -144,8 +146,12 @@ class MultiStateMachineRefreshListenable extends ChangeNotifier {
 ///   routes: [...],
 /// );
 /// ```
-class StateMachineValueRefreshListenable<TContext, TEvent extends XEvent,
-    TSelected> extends ChangeNotifier {
+class StateMachineValueRefreshListenable<
+  TContext,
+  TEvent extends XEvent,
+  TSelected
+>
+    extends ChangeNotifier {
   /// The actor to listen to.
   final StateMachineActor<TContext, TEvent> _actor;
 
@@ -169,8 +175,8 @@ class StateMachineValueRefreshListenable<TContext, TEvent extends XEvent,
     this._actor, {
     required TSelected Function(TContext context) selector,
     bool Function(TSelected previous, TSelected current)? equals,
-  })  : _selector = selector,
-        _equals = equals {
+  }) : _selector = selector,
+       _equals = equals {
     _previousValue = _selector(_actor.snapshot.context);
     _actor.addListener(_onStateChange);
   }

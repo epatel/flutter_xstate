@@ -145,17 +145,19 @@ class _StateMachineInspectorPanelState<TContext, TEvent extends XEvent>
           ),
           if (history.isNotEmpty) ...[
             const SizedBox(height: 8),
-            ...history.reversed.map((record) => Padding(
-                  padding: const EdgeInsets.only(bottom: 2),
-                  child: Text(
-                    '${record.event?.type ?? '?'}: ${record.previousState.value} → ${record.nextState.value}',
-                    style: TextStyle(
-                      color: Colors.grey[500],
-                      fontSize: 10,
-                      fontFamily: 'monospace',
-                    ),
+            ...history.reversed.map(
+              (record) => Padding(
+                padding: const EdgeInsets.only(bottom: 2),
+                child: Text(
+                  '${record.event?.type ?? '?'}: ${record.previousState.value} → ${record.nextState.value}',
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 10,
+                    fontFamily: 'monospace',
                   ),
-                )),
+                ),
+              ),
+            ),
           ],
         ],
       ),
@@ -173,9 +175,7 @@ class _StateMachineInspectorPanelState<TContext, TEvent extends XEvent>
         children: [
           _buildHeader(context),
           _buildTabBar(context),
-          Expanded(
-            child: _buildTabContent(context),
-          ),
+          Expanded(child: _buildTabContent(context)),
         ],
       ),
     );
@@ -266,7 +266,9 @@ class _StateMachineInspectorPanelState<TContext, TEvent extends XEvent>
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: isSelected ? Colors.blue : Colors.grey[500],
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                     fontSize: 13,
                   ),
                 ),
@@ -319,10 +321,7 @@ class _StateTreeView<TContext, TEvent extends XEvent> extends StatelessWidget {
   final StateMachine<TContext, TEvent> machine;
   final String? currentState;
 
-  const _StateTreeView({
-    required this.machine,
-    required this.currentState,
-  });
+  const _StateTreeView({required this.machine, required this.currentState});
 
   @override
   Widget build(BuildContext context) {
@@ -338,8 +337,8 @@ class _StateTreeView<TContext, TEvent extends XEvent> extends StatelessWidget {
     int depth,
   ) {
     final isActive = currentState?.startsWith(config.id) ?? false;
-    final isExactMatch = currentState == config.id ||
-        currentState?.split('.').last == config.id;
+    final isExactMatch =
+        currentState == config.id || currentState?.split('.').last == config.id;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -350,30 +349,28 @@ class _StateTreeView<TContext, TEvent extends XEvent> extends StatelessWidget {
             children: [
               // Connection line
               if (depth > 0) ...[
-                Container(
-                  width: 16,
-                  height: 2,
-                  color: Colors.grey[700],
-                ),
+                Container(width: 16, height: 2, color: Colors.grey[700]),
                 const SizedBox(width: 4),
               ],
               // State box
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: isExactMatch
                       ? Colors.green.withValues(alpha: 0.2)
                       : isActive
-                          ? Colors.blue.withValues(alpha: 0.1)
-                          : Colors.grey[800],
+                      ? Colors.blue.withValues(alpha: 0.1)
+                      : Colors.grey[800],
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(
                     color: isExactMatch
                         ? Colors.green
                         : isActive
-                            ? Colors.blue
-                            : Colors.grey[600]!,
+                        ? Colors.blue
+                        : Colors.grey[600]!,
                     width: isExactMatch ? 2 : 1,
                   ),
                 ),
@@ -388,8 +385,8 @@ class _StateTreeView<TContext, TEvent extends XEvent> extends StatelessWidget {
                         color: isExactMatch
                             ? Colors.green
                             : isActive
-                                ? Colors.blue
-                                : Colors.grey[400],
+                            ? Colors.blue
+                            : Colors.grey[400],
                         fontWeight: isExactMatch || isActive
                             ? FontWeight.bold
                             : FontWeight.normal,
@@ -401,7 +398,9 @@ class _StateTreeView<TContext, TEvent extends XEvent> extends StatelessWidget {
                       const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.grey[700],
                           borderRadius: BorderRadius.circular(4),
@@ -421,17 +420,16 @@ class _StateTreeView<TContext, TEvent extends XEvent> extends StatelessWidget {
                       const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.orange.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: const Text(
                           'final',
-                          style: TextStyle(
-                            color: Colors.orange,
-                            fontSize: 10,
-                          ),
+                          style: TextStyle(color: Colors.orange, fontSize: 10),
                         ),
                       ),
                     ],
@@ -442,18 +440,17 @@ class _StateTreeView<TContext, TEvent extends XEvent> extends StatelessWidget {
               if (config.on.isNotEmpty) ...[
                 const SizedBox(width: 8),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.purple.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
                     '${config.on.length} events',
-                    style: const TextStyle(
-                      color: Colors.purple,
-                      fontSize: 10,
-                    ),
+                    style: const TextStyle(color: Colors.purple, fontSize: 10),
                   ),
                 ),
               ],
@@ -463,8 +460,9 @@ class _StateTreeView<TContext, TEvent extends XEvent> extends StatelessWidget {
         // Child states
         if (config.states.isNotEmpty) ...[
           const SizedBox(height: 8),
-          ...config.states.values
-              .map((child) => _buildStateNode(context, child, depth + 1)),
+          ...config.states.values.map(
+            (child) => _buildStateNode(context, child, depth + 1),
+          ),
         ],
         const SizedBox(height: 8),
       ],
@@ -497,10 +495,7 @@ class _TransitionHistoryView<TContext> extends StatelessWidget {
   final List<TransitionRecord<TContext>> history;
   final VoidCallback onClear;
 
-  const _TransitionHistoryView({
-    required this.history,
-    required this.onClear,
-  });
+  const _TransitionHistoryView({required this.history, required this.onClear});
 
   @override
   Widget build(BuildContext context) {
@@ -535,9 +530,7 @@ class _TransitionHistoryView<TContext> extends StatelessWidget {
                 onPressed: onClear,
                 icon: const Icon(Icons.clear_all, size: 16),
                 label: const Text('Clear'),
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.grey[400],
-                ),
+                style: TextButton.styleFrom(foregroundColor: Colors.grey[400]),
               ),
             ],
           ),
@@ -630,7 +623,11 @@ class _TransitionTile<TContext> extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Icon(Icons.arrow_forward, color: Colors.grey[600], size: 16),
+                child: Icon(
+                  Icons.arrow_forward,
+                  color: Colors.grey[600],
+                  size: 16,
+                ),
               ),
               Expanded(
                 child: Container(
@@ -638,7 +635,9 @@ class _TransitionTile<TContext> extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.blue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: Colors.blue.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Text(
                     record.nextState.value.toString(),
@@ -673,10 +672,7 @@ class _ContextView<TContext> extends StatelessWidget {
   final TContext context;
   final String Function(TContext)? formatter;
 
-  const _ContextView({
-    required this.context,
-    this.formatter,
-  });
+  const _ContextView({required this.context, this.formatter});
 
   @override
   Widget build(BuildContext context_) {
@@ -762,12 +758,14 @@ class _StatsView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          ...stats.eventCounts.entries.map((e) => _CountBar(
-                label: e.key,
-                count: e.value,
-                total: stats.totalTransitions,
-                color: Colors.purple,
-              )),
+          ...stats.eventCounts.entries.map(
+            (e) => _CountBar(
+              label: e.key,
+              count: e.value,
+              total: stats.totalTransitions,
+              color: Colors.purple,
+            ),
+          ),
           const SizedBox(height: 16),
           Text(
             'States Entered',
@@ -777,12 +775,14 @@ class _StatsView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          ...stats.stateCounts.entries.map((e) => _CountBar(
-                label: e.key,
-                count: e.value,
-                total: stats.totalTransitions,
-                color: Colors.teal,
-              )),
+          ...stats.stateCounts.entries.map(
+            (e) => _CountBar(
+              label: e.key,
+              count: e.value,
+              total: stats.totalTransitions,
+              color: Colors.teal,
+            ),
+          ),
         ],
       ),
     );
@@ -906,10 +906,7 @@ class _EventSenderView<TEvent extends XEvent> extends StatelessWidget {
   final Map<String, TEvent Function()> eventBuilders;
   final void Function(TEvent) onSend;
 
-  const _EventSenderView({
-    required this.eventBuilders,
-    required this.onSend,
-  });
+  const _EventSenderView({required this.eventBuilders, required this.onSend});
 
   @override
   Widget build(BuildContext context) {
@@ -1030,8 +1027,9 @@ class _InspectorOverlayState<TContext, TEvent extends XEvent>
             },
             child: FloatingActionButton.small(
               onPressed: () => setState(() => _isExpanded = !_isExpanded),
-              backgroundColor:
-                  _isExpanded ? Colors.red[700] : Colors.green[700],
+              backgroundColor: _isExpanded
+                  ? Colors.red[700]
+                  : Colors.green[700],
               child: Icon(_isExpanded ? Icons.close : Icons.bug_report),
             ),
           ),

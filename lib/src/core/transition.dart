@@ -4,16 +4,12 @@ import '../events/x_event.dart';
 import 'state_value.dart';
 
 /// Callback type for actions executed during transitions.
-typedef ActionCallback<TContext, TEvent extends XEvent> = TContext Function(
-  TContext context,
-  TEvent event,
-);
+typedef ActionCallback<TContext, TEvent extends XEvent> =
+    TContext Function(TContext context, TEvent event);
 
 /// Callback type for guard conditions.
-typedef GuardCallback<TContext, TEvent extends XEvent> = bool Function(
-  TContext context,
-  TEvent event,
-);
+typedef GuardCallback<TContext, TEvent extends XEvent> =
+    bool Function(TContext context, TEvent event);
 
 /// Defines a transition from one state to another.
 ///
@@ -117,9 +113,9 @@ class TransitionResult<TContext> {
   const TransitionResult.noChange({
     required this.fromValue,
     required this.context,
-  })  : toValue = fromValue,
-        changed = false,
-        historyUpdates = const {};
+  }) : toValue = fromValue,
+       changed = false,
+       historyUpdates = const {};
 
   @override
   String toString() {

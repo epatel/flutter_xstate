@@ -34,12 +34,7 @@ class AuthContext {
   final String? error;
   final User? user;
 
-  const AuthContext({
-    this.email,
-    this.token,
-    this.error,
-    this.user,
-  });
+  const AuthContext({this.email, this.token, this.error, this.user});
 
   AuthContext copyWith({
     String? email,
@@ -49,13 +44,12 @@ class AuthContext {
     bool clearError = false,
     bool clearUser = false,
     bool clearToken = false,
-  }) =>
-      AuthContext(
-        email: email ?? this.email,
-        token: clearToken ? null : (token ?? this.token),
-        error: clearError ? null : (error ?? this.error),
-        user: clearUser ? null : (user ?? this.user),
-      );
+  }) => AuthContext(
+    email: email ?? this.email,
+    token: clearToken ? null : (token ?? this.token),
+    error: clearError ? null : (error ?? this.error),
+    user: clearUser ? null : (user ?? this.user),
+  );
 
   bool get isAuthenticated => token != null && user != null;
 }
@@ -121,10 +115,12 @@ void _simulateLogin(String email, String password) {
     if (_authActor == null) return;
 
     if (email == 'test@example.com' && password == 'password') {
-      _authActor!.send(LoginSuccessEvent(
-        token: 'fake-jwt-token-12345',
-        user: User(id: '1', name: 'Test User', email: email),
-      ));
+      _authActor!.send(
+        LoginSuccessEvent(
+          token: 'fake-jwt-token-12345',
+          user: User(id: '1', name: 'Test User', email: email),
+        ),
+      );
     } else {
       _authActor!.send(LoginFailureEvent('Invalid email or password'));
     }
@@ -135,28 +131,26 @@ final authMachine = StateMachine.create<AuthContext, AuthEvent>(
   (m) => m
     ..context(const AuthContext())
     ..initial('loggedOut')
-
     // LOGGED OUT - Compound state with children
     ..state(
       'loggedOut',
       (s) => s
         ..initial('idle') // Makes this a compound state
-        ..entry([
-          (ctx, _) => ctx.copyWith(clearUser: true, clearToken: true),
-        ])
-
+        ..entry([(ctx, _) => ctx.copyWith(clearUser: true, clearToken: true)])
         // Child: idle - waiting for login
         ..state(
           'idle',
           (child) => child
-            ..on<LoginSubmitEvent>('loggedOut.submitting', actions: [
-              (ctx, event) {
-                final e = event as LoginSubmitEvent;
-                return ctx.copyWith(email: e.email, clearError: true);
-              },
-            ]),
+            ..on<LoginSubmitEvent>(
+              'loggedOut.submitting',
+              actions: [
+                (ctx, event) {
+                  final e = event as LoginSubmitEvent;
+                  return ctx.copyWith(email: e.email, clearError: true);
+                },
+              ],
+            ),
         )
-
         // Child: submitting - login in progress
         ..state(
           'submitting',
@@ -169,45 +163,56 @@ final authMachine = StateMachine.create<AuthContext, AuthEvent>(
                 return ctx;
               },
             ])
-            ..on<LoginSuccessEvent>('loggedIn', actions: [
-              (ctx, event) {
-                final e = event as LoginSuccessEvent;
-                return ctx.copyWith(token: e.token, user: e.user);
-              },
-            ])
-            ..on<LoginFailureEvent>('loggedOut.error', actions: [
-              (ctx, event) {
-                final e = event as LoginFailureEvent;
-                return ctx.copyWith(error: e.error);
-              },
-            ]),
+            ..on<LoginSuccessEvent>(
+              'loggedIn',
+              actions: [
+                (ctx, event) {
+                  final e = event as LoginSuccessEvent;
+                  return ctx.copyWith(token: e.token, user: e.user);
+                },
+              ],
+            )
+            ..on<LoginFailureEvent>(
+              'loggedOut.error',
+              actions: [
+                (ctx, event) {
+                  final e = event as LoginFailureEvent;
+                  return ctx.copyWith(error: e.error);
+                },
+              ],
+            ),
         )
-
         // Child: error - login failed
         ..state(
           'error',
           (child) => child
-            ..on<RetryEvent>('loggedOut.idle', actions: [
-              (ctx, _) => ctx.copyWith(clearError: true),
-            ])
-            ..on<LoginSubmitEvent>('loggedOut.submitting', actions: [
-              (ctx, event) {
-                final e = event as LoginSubmitEvent;
-                return ctx.copyWith(email: e.email, clearError: true);
-              },
-            ]),
+            ..on<RetryEvent>(
+              'loggedOut.idle',
+              actions: [(ctx, _) => ctx.copyWith(clearError: true)],
+            )
+            ..on<LoginSubmitEvent>(
+              'loggedOut.submitting',
+              actions: [
+                (ctx, event) {
+                  final e = event as LoginSubmitEvent;
+                  return ctx.copyWith(email: e.email, clearError: true);
+                },
+              ],
+            ),
         ),
     )
-
     // LOGGED IN
     ..state(
       'loggedIn',
       (s) => s
         ..on<LogoutEvent>('loggedOut.idle')
-        ..on<SessionExpiredEvent>('loggedOut.error', actions: [
-          (ctx, _) =>
-              ctx.copyWith(error: 'Session expired. Please login again.'),
-        ]),
+        ..on<SessionExpiredEvent>(
+          'loggedOut.error',
+          actions: [
+            (ctx, _) =>
+                ctx.copyWith(error: 'Session expired. Please login again.'),
+          ],
+        ),
     ),
   id: 'auth',
 );
@@ -310,9 +315,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 8),
                 Text(
                   'Sign in to continue',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 40),
@@ -379,10 +384,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: isLoading
                         ? null
                         : () {
-                            send(LoginSubmitEvent(
-                              email: _emailController.text,
-                              password: _passwordController.text,
-                            ));
+                            send(
+                              LoginSubmitEvent(
+                                email: _emailController.text,
+                                password: _passwordController.text,
+                              ),
+                            );
                           },
                     style: FilledButton.styleFrom(
                       shape: RoundedRectangleBorder(
@@ -398,10 +405,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               color: Colors.white,
                             ),
                           )
-                        : const Text(
-                            'Sign In',
-                            style: TextStyle(fontSize: 16),
-                          ),
+                        : const Text('Sign In', style: TextStyle(fontSize: 16)),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -494,9 +498,8 @@ class HomeScreen extends StatelessWidget {
                 child: Text(
                   user.name[0].toUpperCase(),
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                        color:
-                            Theme.of(context).colorScheme.onPrimaryContainer,
-                      ),
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
@@ -509,9 +512,9 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 user.email,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
               ),
               const SizedBox(height: 48),
 

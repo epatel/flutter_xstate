@@ -47,7 +47,8 @@ void main() {
       final result = config.invoke(const TestContext(), StartEvent());
 
       expect(result, isA<FutureInvokeResult>());
-      final futureResult = result as FutureInvokeResult<TestContext, TestEvent, String>;
+      final futureResult =
+          result as FutureInvokeResult<TestContext, TestEvent, String>;
       expect(futureResult.id, equals('fetch'));
       expect(futureResult.future, isA<Future<String>>());
     });
@@ -93,7 +94,8 @@ void main() {
       final result = config.invoke(const TestContext(), StartEvent());
 
       expect(result, isA<StreamInvokeResult>());
-      final streamResult = result as StreamInvokeResult<TestContext, TestEvent, int>;
+      final streamResult =
+          result as StreamInvokeResult<TestContext, TestEvent, int>;
       expect(streamResult.id, equals('counter'));
       expect(streamResult.stream, isA<Stream<int>>());
     });
@@ -105,7 +107,8 @@ void main() {
       );
 
       final result = config.invoke(const TestContext(), StartEvent());
-      final streamResult = result as StreamInvokeResult<TestContext, TestEvent, int>;
+      final streamResult =
+          result as StreamInvokeResult<TestContext, TestEvent, int>;
 
       final values = await streamResult.stream.toList();
       expect(values, equals([1, 2, 3]));
@@ -126,38 +129,54 @@ void main() {
     });
 
     test('creates config with id and src', () {
-      final config = InvokeMachine<TestContext, TestEvent, TestContext, TestEvent>(
-        id: 'child',
-        src: (ctx, event) => childMachine,
-      );
+      final config =
+          InvokeMachine<TestContext, TestEvent, TestContext, TestEvent>(
+            id: 'child',
+            src: (ctx, event) => childMachine,
+          );
 
       expect(config.id, equals('child'));
     });
 
     test('invoke returns MachineInvokeResult', () {
-      final config = InvokeMachine<TestContext, TestEvent, TestContext, TestEvent>(
-        id: 'child',
-        src: (ctx, event) => childMachine,
-      );
+      final config =
+          InvokeMachine<TestContext, TestEvent, TestContext, TestEvent>(
+            id: 'child',
+            src: (ctx, event) => childMachine,
+          );
 
       final result = config.invoke(const TestContext(), StartEvent());
 
       expect(result, isA<MachineInvokeResult>());
-      final machineResult = result as MachineInvokeResult<TestContext, TestEvent, TestContext, TestEvent>;
+      final machineResult =
+          result
+              as MachineInvokeResult<
+                TestContext,
+                TestEvent,
+                TestContext,
+                TestEvent
+              >;
       expect(machineResult.id, equals('child'));
       expect(machineResult.machine, equals(childMachine));
     });
 
     test('src can customize machine based on context', () {
-      final config = InvokeMachine<TestContext, TestEvent, TestContext, TestEvent>(
-        id: 'child',
-        src: (ctx, event) => childMachine.withContext(
-          TestContext(count: ctx.count * 2),
-        ),
-      );
+      final config =
+          InvokeMachine<TestContext, TestEvent, TestContext, TestEvent>(
+            id: 'child',
+            src: (ctx, event) =>
+                childMachine.withContext(TestContext(count: ctx.count * 2)),
+          );
 
       final result = config.invoke(const TestContext(count: 5), StartEvent());
-      final machineResult = result as MachineInvokeResult<TestContext, TestEvent, TestContext, TestEvent>;
+      final machineResult =
+          result
+              as MachineInvokeResult<
+                TestContext,
+                TestEvent,
+                TestContext,
+                TestEvent
+              >;
 
       expect(machineResult.machine.initialContext.count, equals(10));
     });
@@ -167,7 +186,8 @@ void main() {
     test('creates config with id and src', () {
       final config = InvokeCallback<TestContext, TestEvent>(
         id: 'callback',
-        src: (ctx, event) => (sendBack, receive) => () {},
+        src: (ctx, event) =>
+            (sendBack, receive) => () {},
       );
 
       expect(config.id, equals('callback'));
@@ -176,13 +196,15 @@ void main() {
     test('invoke returns CallbackInvokeResult', () {
       final config = InvokeCallback<TestContext, TestEvent>(
         id: 'callback',
-        src: (ctx, event) => (sendBack, receive) => () {},
+        src: (ctx, event) =>
+            (sendBack, receive) => () {},
       );
 
       final result = config.invoke(const TestContext(), StartEvent());
 
       expect(result, isA<CallbackInvokeResult>());
-      final callbackResult = result as CallbackInvokeResult<TestContext, TestEvent>;
+      final callbackResult =
+          result as CallbackInvokeResult<TestContext, TestEvent>;
       expect(callbackResult.id, equals('callback'));
     });
 
@@ -199,12 +221,10 @@ void main() {
       );
 
       final result = config.invoke(const TestContext(), StartEvent());
-      final callbackResult = result as CallbackInvokeResult<TestContext, TestEvent>;
+      final callbackResult =
+          result as CallbackInvokeResult<TestContext, TestEvent>;
 
-      callbackResult.factory(
-        (event) => sentEvents.add(event),
-        (handler) {},
-      );
+      callbackResult.factory((event) => sentEvents.add(event), (handler) {});
 
       expect(sentEvents.length, equals(2));
       expect((sentEvents[0] as DataEvent).data, equals('hello'));
@@ -222,12 +242,10 @@ void main() {
       );
 
       final result = config.invoke(const TestContext(), StartEvent());
-      final callbackResult = result as CallbackInvokeResult<TestContext, TestEvent>;
+      final callbackResult =
+          result as CallbackInvokeResult<TestContext, TestEvent>;
 
-      final cleanup = callbackResult.factory(
-        (event) {},
-        (handler) {},
-      );
+      final cleanup = callbackResult.factory((event) {}, (handler) {});
 
       expect(cleaned, isFalse);
       cleanup();
@@ -265,10 +283,11 @@ void main() {
         id: 'child',
       );
 
-      final config = InvokeFactory.machine<TestContext, TestEvent, TestContext, TestEvent>(
-        id: 'child',
-        src: (ctx, event) => childMachine,
-      );
+      final config =
+          InvokeFactory.machine<TestContext, TestEvent, TestContext, TestEvent>(
+            id: 'child',
+            src: (ctx, event) => childMachine,
+          );
 
       expect(config, isA<InvokeMachine>());
       expect(config.id, equals('child'));
@@ -277,7 +296,8 @@ void main() {
     test('callback creates InvokeCallback', () {
       final config = InvokeFactory.callback<TestContext, TestEvent>(
         id: 'callback',
-        src: (ctx, event) => (sendBack, receive) => () {},
+        src: (ctx, event) =>
+            (sendBack, receive) => () {},
       );
 
       expect(config, isA<InvokeCallback>());

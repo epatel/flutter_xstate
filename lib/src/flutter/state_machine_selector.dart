@@ -34,7 +34,8 @@ class StateMachineSelector<TContext, TEvent extends XEvent, TSelected>
     BuildContext context,
     TSelected value,
     SendEvent<TEvent> send,
-  ) builder;
+  )
+  builder;
 
   /// Optional equality check for the selected value.
   ///
@@ -89,7 +90,8 @@ class StateMachineSelector2<TContext, TEvent extends XEvent, T1, T2>
     T1 value1,
     T2 value2,
     SendEvent<TEvent> send,
-  ) builder;
+  )
+  builder;
 
   const StateMachineSelector2({
     super.key,
@@ -126,7 +128,8 @@ class StateMachineSelector3<TContext, TEvent extends XEvent, T1, T2, T3>
     T2 value2,
     T3 value3,
     SendEvent<TEvent> send,
-  ) builder;
+  )
+  builder;
 
   const StateMachineSelector3({
     super.key,
@@ -182,7 +185,8 @@ class StateMachineSelectorWithState<TContext, TEvent extends XEvent, TSelected>
     StateSnapshot<TContext> state,
     TSelected value,
     SendEvent<TEvent> send,
-  ) builder;
+  )
+  builder;
 
   /// Whether to also rebuild when the state value changes.
   ///
@@ -200,8 +204,10 @@ class StateMachineSelectorWithState<TContext, TEvent extends XEvent, TSelected>
   @override
   Widget build(BuildContext context) {
     if (rebuildOnStateChange) {
-      return Selector<StateMachineActor<TContext, TEvent>,
-          (StateSnapshot<TContext>, TSelected)>(
+      return Selector<
+        StateMachineActor<TContext, TEvent>,
+        (StateSnapshot<TContext>, TSelected)
+      >(
         selector: (_, actor) =>
             (actor.snapshot, selector(actor.snapshot.context)),
         builder: (context, values, child) {
@@ -238,7 +244,7 @@ class StateMachineMatchSelector<TContext, TEvent extends XEvent>
 
   /// Builder when the state matches.
   final Widget Function(BuildContext context, SendEvent<TEvent> send)
-      matchBuilder;
+  matchBuilder;
 
   /// Builder when the state does not match.
   final Widget Function(BuildContext context, SendEvent<TEvent> send)? orElse;

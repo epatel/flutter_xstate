@@ -64,7 +64,13 @@ export 'src/core/state_config.dart' show StateConfig, StateType;
 
 // Events
 export 'src/events/x_event.dart'
-    show XEvent, SimpleEvent, InitEvent, DoneStateEvent, DoneInvokeEvent, ErrorInvokeEvent;
+    show
+        XEvent,
+        SimpleEvent,
+        InitEvent,
+        DoneStateEvent,
+        DoneInvokeEvent,
+        ErrorInvokeEvent;
 
 // Builder
 export 'src/builder/machine_builder.dart' show MachineBuilder;
@@ -97,7 +103,8 @@ export 'src/actions/built_in_actions.dart'
 
 // Hierarchy
 export 'src/hierarchy/state_node.dart' show StatePath, StateHierarchy;
-export 'src/hierarchy/history_state.dart' show HistoryManager, HistoryResolution;
+export 'src/hierarchy/history_state.dart'
+    show HistoryManager, HistoryResolution;
 export 'src/hierarchy/transition_resolver.dart'
     show ResolvedTransition, TransitionResolver;
 

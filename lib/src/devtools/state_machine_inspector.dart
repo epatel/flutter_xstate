@@ -98,9 +98,7 @@ class StateMachineInspector<TContext, TEvent extends XEvent>
   /// Stopwatch for measuring transition duration.
   final Stopwatch _stopwatch = Stopwatch();
 
-  StateMachineInspector({
-    this.config = const InspectorConfig(),
-  });
+  StateMachineInspector({this.config = const InspectorConfig()});
 
   /// Attach to an actor.
   void attach(StateMachineActor<TContext, TEvent> actor) {
@@ -156,8 +154,7 @@ class StateMachineInspector<TContext, TEvent extends XEvent>
   }
 
   /// Get the transition history.
-  List<TransitionRecord<TContext>> get history =>
-      List.unmodifiable(_history);
+  List<TransitionRecord<TContext>> get history => List.unmodifiable(_history);
 
   /// Get the current state.
   StateSnapshot<TContext>? get currentState => _actor?.snapshot;
@@ -193,9 +190,7 @@ class StateMachineInspector<TContext, TEvent extends XEvent>
 
   /// Get transitions for a specific event type.
   List<TransitionRecord<TContext>> transitionsForEvent(String eventType) {
-    return _history
-        .where((record) => record.event?.type == eventType)
-        .toList();
+    return _history.where((record) => record.event?.type == eventType).toList();
   }
 
   /// Get transitions to a specific state.
@@ -241,7 +236,8 @@ class StateMachineInspector<TContext, TEvent extends XEvent>
       averageTransitionDuration: _history.isEmpty
           ? Duration.zero
           : Duration(
-              microseconds: totalDuration.inMicroseconds ~/ _history.length),
+              microseconds: totalDuration.inMicroseconds ~/ _history.length,
+            ),
     );
   }
 
@@ -334,8 +330,9 @@ class InspectorRegistry {
   }
 
   /// Get an inspector by ID.
-  StateMachineInspector<TContext, TEvent>?
-      get<TContext, TEvent extends XEvent>(String id) {
+  StateMachineInspector<TContext, TEvent>? get<TContext, TEvent extends XEvent>(
+    String id,
+  ) {
     return _inspectors[id] as StateMachineInspector<TContext, TEvent>?;
   }
 

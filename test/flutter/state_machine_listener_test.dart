@@ -36,16 +36,17 @@ void main() {
       (m) => m
         ..context(const CounterContext())
         ..initial('active')
-        ..state('active', (s) => s
-          ..on<IncrementEvent>('active', actions: [
-            (ctx, _) => ctx.copyWith(count: ctx.count + 1),
-          ])
-          ..on<ResetEvent>('idle')
-          ..on<CompleteEvent>('done')
+        ..state(
+          'active',
+          (s) => s
+            ..on<IncrementEvent>(
+              'active',
+              actions: [(ctx, _) => ctx.copyWith(count: ctx.count + 1)],
+            )
+            ..on<ResetEvent>('idle')
+            ..on<CompleteEvent>('done'),
         )
-        ..state('idle', (s) => s
-          ..on<IncrementEvent>('active')
-        )
+        ..state('idle', (s) => s..on<IncrementEvent>('active'))
         ..state('done', (s) => s..final_()),
       id: 'counter',
     );
@@ -93,8 +94,7 @@ void main() {
           home: StateMachineProvider<CounterContext, CounterEvent>(
             machine: counterMachine,
             child: StateMachineListener<CounterContext, CounterEvent>(
-              listenWhen: (previous, current) =>
-                  current.context.count >= 3,
+              listenWhen: (previous, current) => current.context.count >= 3,
               listener: (context, state) {
                 stateChanges.add(state);
               },

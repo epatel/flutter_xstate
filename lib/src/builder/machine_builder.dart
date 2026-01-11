@@ -78,9 +78,7 @@ class MachineBuilder<TContext, TEvent extends XEvent> {
       throw StateError('Machine "$_id" must have at least one state');
     }
     if (!_states.containsKey(_initial)) {
-      throw StateError(
-        'Initial state "$_initial" not found in machine "$_id"',
-      );
+      throw StateError('Initial state "$_initial" not found in machine "$_id"');
     }
 
     // Build the root state config

@@ -24,7 +24,8 @@ class StateRoute<TContext, TEvent extends XEvent> {
     BuildContext context,
     GoRouterState routerState,
     StateSnapshot<TContext> machineState,
-  )? builder;
+  )?
+  builder;
 
   /// Nested routes.
   final List<StateRoute<TContext, TEvent>> children;
@@ -164,9 +165,7 @@ class StateMachineRouter<TContext, TEvent extends XEvent> {
         // Provide a default empty widget if no builder is specified
         return const SizedBox.shrink();
       },
-      routes: stateRoute.children
-          .map((child) => _buildRoute(child))
-          .toList(),
+      routes: stateRoute.children.map((child) => _buildRoute(child)).toList(),
     );
   }
 
@@ -324,10 +323,7 @@ mixin StateMachineRouterMixin<TContext, TEvent extends XEvent> {
       final path = entry.value;
       final builder = stateBuilders[stateId];
 
-      return GoRoute(
-        path: path,
-        builder: builder,
-      );
+      return GoRoute(path: path, builder: builder);
     }).toList();
 
     return [...routes, ...additionalRoutes];
@@ -364,7 +360,8 @@ GoRouter createStateMachineRouter<TContext, TEvent extends XEvent>({
   final refreshListenable = StateMachineRefreshListenable(actor);
 
   return GoRouter(
-    initialLocation: initialLocation ?? stateRoutes[actor.snapshot.value.toString()] ?? '/',
+    initialLocation:
+        initialLocation ?? stateRoutes[actor.snapshot.value.toString()] ?? '/',
     refreshListenable: refreshListenable,
     redirect: (context, state) {
       final currentState = actor.snapshot.value.toString();
@@ -377,10 +374,7 @@ GoRouter createStateMachineRouter<TContext, TEvent extends XEvent>({
       return null;
     },
     routes: stateRoutes.values.toSet().map((path) {
-      return GoRoute(
-        path: path,
-        builder: builders[path],
-      );
+      return GoRoute(path: path, builder: builders[path]);
     }).toList(),
     debugLogDiagnostics: debugLogDiagnostics,
   );

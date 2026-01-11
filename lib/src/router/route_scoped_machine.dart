@@ -34,7 +34,8 @@ class RouteScopedMachine<TContext, TEvent extends XEvent>
   final Widget Function(
     BuildContext context,
     StateMachineActor<TContext, TEvent> actor,
-  ) builder;
+  )
+  builder;
 
   /// Callback when the actor is created.
   final void Function(StateMachineActor<TContext, TEvent> actor)? onCreated;
@@ -114,7 +115,8 @@ class StateMachineRoute<TContext, TEvent extends XEvent> extends GoRoute {
       BuildContext context,
       GoRouterState state,
       StateMachineActor<TContext, TEvent> actor,
-    ) builder,
+    )
+    builder,
     StateSnapshot<TContext>? initialSnapshot,
     void Function(StateMachineActor<TContext, TEvent> actor)? onCreated,
     void Function(StateMachineActor<TContext, TEvent> actor)? onDisposed,
@@ -124,15 +126,15 @@ class StateMachineRoute<TContext, TEvent extends XEvent> extends GoRoute {
     super.redirect,
     super.parentNavigatorKey,
   }) : super(
-          builder: (context, state) => RouteScopedMachine<TContext, TEvent>(
-            machine: machine,
-            initialSnapshot: initialSnapshot,
-            onCreated: onCreated,
-            onDisposed: onDisposed,
-            autoStart: autoStart,
-            builder: (context, actor) => builder(context, state, actor),
-          ),
-        );
+         builder: (context, state) => RouteScopedMachine<TContext, TEvent>(
+           machine: machine,
+           initialSnapshot: initialSnapshot,
+           onCreated: onCreated,
+           onDisposed: onDisposed,
+           autoStart: autoStart,
+           builder: (context, actor) => builder(context, state, actor),
+         ),
+       );
 }
 
 /// A widget that restores state machine state from route parameters.
@@ -170,7 +172,8 @@ class RouteRestoredMachine<TContext, TEvent extends XEvent>
   final Widget Function(
     BuildContext context,
     StateMachineActor<TContext, TEvent> actor,
-  ) builder;
+  )
+  builder;
 
   /// Callback when the actor is created.
   final void Function(StateMachineActor<TContext, TEvent> actor)? onCreated;
@@ -276,7 +279,8 @@ class RouteSyncedMachine<TContext, TEvent extends XEvent>
   final Widget Function(
     BuildContext context,
     StateMachineActor<TContext, TEvent> actor,
-  ) builder;
+  )
+  builder;
 
   /// Whether to update the route when state changes.
   final bool syncToRoute;

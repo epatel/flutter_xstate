@@ -36,13 +36,12 @@ class DownloadContext {
     String? error,
     String? filename,
     bool clearError = false,
-  }) =>
-      DownloadContext(
-        url: url ?? this.url,
-        progress: progress ?? this.progress,
-        error: clearError ? null : (error ?? this.error),
-        filename: filename ?? this.filename,
-      );
+  }) => DownloadContext(
+    url: url ?? this.url,
+    progress: progress ?? this.progress,
+    error: clearError ? null : (error ?? this.error),
+    filename: filename ?? this.filename,
+  );
 }
 
 sealed class DownloadEvent extends XEvent {}
@@ -142,24 +141,25 @@ StateMachine<DownloadContext, DownloadEvent> createDownloadMachine() {
     (m) => m
       ..context(const DownloadContext())
       ..initial('idle')
-
       // IDLE - Waiting for download request
       ..state(
         'idle',
         (s) => s
-          ..on<StartDownloadEvent>('downloading', actions: [
-            (ctx, event) {
-              final e = event as StartDownloadEvent;
-              return ctx.copyWith(
-                url: e.url,
-                filename: e.filename,
-                progress: 0.0,
-                clearError: true,
-              );
-            },
-          ]),
+          ..on<StartDownloadEvent>(
+            'downloading',
+            actions: [
+              (ctx, event) {
+                final e = event as StartDownloadEvent;
+                return ctx.copyWith(
+                  url: e.url,
+                  filename: e.filename,
+                  progress: 0.0,
+                  clearError: true,
+                );
+              },
+            ],
+          ),
       )
-
       // DOWNLOADING - Download in progress
       ..state(
         'downloading',
@@ -171,55 +171,72 @@ StateMachine<DownloadContext, DownloadEvent> createDownloadMachine() {
               return ctx;
             },
           ])
-          ..on<DownloadProgressEvent>(null, actions: [
-            // null target = self-transition (stay in same state)
-            (ctx, event) =>
-                ctx.copyWith(progress: (event as DownloadProgressEvent).progress),
-          ])
-          ..on<DownloadCompleteEvent>('completed', actions: [
-            (ctx, _) => ctx.copyWith(progress: 1.0),
-          ])
-          ..on<DownloadFailedEvent>('error', actions: [
-            (ctx, event) =>
-                ctx.copyWith(error: (event as DownloadFailedEvent).error),
-          ])
-          ..on<CancelDownloadEvent>('idle', actions: [
-            (ctx, _) {
-              _cancelSimulatedDownload();
-              return ctx.copyWith(progress: 0.0, clearError: true);
-            },
-          ]),
+          ..on<DownloadProgressEvent>(
+            null,
+            actions: [
+              // null target = self-transition (stay in same state)
+              (ctx, event) => ctx.copyWith(
+                progress: (event as DownloadProgressEvent).progress,
+              ),
+            ],
+          )
+          ..on<DownloadCompleteEvent>(
+            'completed',
+            actions: [(ctx, _) => ctx.copyWith(progress: 1.0)],
+          )
+          ..on<DownloadFailedEvent>(
+            'error',
+            actions: [
+              (ctx, event) =>
+                  ctx.copyWith(error: (event as DownloadFailedEvent).error),
+            ],
+          )
+          ..on<CancelDownloadEvent>(
+            'idle',
+            actions: [
+              (ctx, _) {
+                _cancelSimulatedDownload();
+                return ctx.copyWith(progress: 0.0, clearError: true);
+              },
+            ],
+          ),
       )
-
       // COMPLETED - Download finished successfully
       ..state(
         'completed',
         (s) => s
-          ..on<ResetDownloadEvent>('idle', actions: [
-            (ctx, _) => const DownloadContext(),
-          ])
-          ..on<StartDownloadEvent>('downloading', actions: [
-            (ctx, event) {
-              final e = event as StartDownloadEvent;
-              return ctx.copyWith(
-                url: e.url,
-                filename: e.filename,
-                progress: 0.0,
-              );
-            },
-          ]),
+          ..on<ResetDownloadEvent>(
+            'idle',
+            actions: [(ctx, _) => const DownloadContext()],
+          )
+          ..on<StartDownloadEvent>(
+            'downloading',
+            actions: [
+              (ctx, event) {
+                final e = event as StartDownloadEvent;
+                return ctx.copyWith(
+                  url: e.url,
+                  filename: e.filename,
+                  progress: 0.0,
+                );
+              },
+            ],
+          ),
       )
-
       // ERROR - Download failed
       ..state(
         'error',
         (s) => s
-          ..on<RetryDownloadEvent>('downloading', actions: [
-            (ctx, _) => ctx.copyWith(progress: 0.0, clearError: true),
-          ])
-          ..on<ResetDownloadEvent>('idle', actions: [
-            (ctx, _) => const DownloadContext(),
-          ]),
+          ..on<RetryDownloadEvent>(
+            'downloading',
+            actions: [
+              (ctx, _) => ctx.copyWith(progress: 0.0, clearError: true),
+            ],
+          )
+          ..on<ResetDownloadEvent>(
+            'idle',
+            actions: [(ctx, _) => const DownloadContext()],
+          ),
       ),
     id: 'download',
   );
@@ -244,12 +261,11 @@ class UIContext {
     String? selectedFile,
     bool? showCompletionDialog,
     int? downloadCount,
-  }) =>
-      UIContext(
-        selectedFile: selectedFile ?? this.selectedFile,
-        showCompletionDialog: showCompletionDialog ?? this.showCompletionDialog,
-        downloadCount: downloadCount ?? this.downloadCount,
-      );
+  }) => UIContext(
+    selectedFile: selectedFile ?? this.selectedFile,
+    showCompletionDialog: showCompletionDialog ?? this.showCompletionDialog,
+    downloadCount: downloadCount ?? this.downloadCount,
+  );
 }
 
 sealed class UIEvent extends XEvent {}
@@ -320,65 +336,73 @@ StateMachine<UIContext, UIEvent> createUIMachine() {
     (m) => m
       ..context(const UIContext())
       ..initial('browsing')
-
       // BROWSING - User is selecting files
       ..state(
         'browsing',
         (s) => s
-          ..on<SelectFileEvent>(null, actions: [
-            (ctx, event) =>
-                ctx.copyWith(selectedFile: (event as SelectFileEvent).filename),
-          ])
+          ..on<SelectFileEvent>(
+            null,
+            actions: [
+              (ctx, event) => ctx.copyWith(
+                selectedFile: (event as SelectFileEvent).filename,
+              ),
+            ],
+          )
           ..on<RequestDownloadEvent>(
             'waitingForDownload',
             // Guard: only if a file is selected
             guard: (ctx, _) => ctx.selectedFile.isNotEmpty,
           ),
       )
-
       // WAITING FOR DOWNLOAD - Waiting for download machine to work
       ..state(
         'waitingForDownload',
         (s) => s
           ..on<RequestCancelEvent>('browsing')
-          ..on<DownloadCompletedNotification>('showingResult', actions: [
-            (ctx, event) => ctx.copyWith(
-                  showCompletionDialog: true,
-                  downloadCount: ctx.downloadCount + 1,
-                ),
-          ])
+          ..on<DownloadCompletedNotification>(
+            'showingResult',
+            actions: [
+              (ctx, event) => ctx.copyWith(
+                showCompletionDialog: true,
+                downloadCount: ctx.downloadCount + 1,
+              ),
+            ],
+          )
           ..on<DownloadErrorNotification>('showingError'),
       )
-
       // SHOWING RESULT - Download completed, showing success
       ..state(
         'showingResult',
         (s) => s
-          ..on<DismissDialogEvent>('browsing', actions: [
-            (ctx, _) => ctx.copyWith(
+          ..on<DismissDialogEvent>(
+            'browsing',
+            actions: [
+              (ctx, _) =>
+                  ctx.copyWith(showCompletionDialog: false, selectedFile: ''),
+            ],
+          )
+          ..on<SelectFileEvent>(
+            'browsing',
+            actions: [
+              (ctx, event) {
+                final e = event as SelectFileEvent;
+                return ctx.copyWith(
+                  selectedFile: e.filename,
                   showCompletionDialog: false,
-                  selectedFile: '',
-                ),
-          ])
-          ..on<SelectFileEvent>('browsing', actions: [
-            (ctx, event) {
-              final e = event as SelectFileEvent;
-              return ctx.copyWith(
-                selectedFile: e.filename,
-                showCompletionDialog: false,
-              );
-            },
-          ]),
+                );
+              },
+            ],
+          ),
       )
-
       // SHOWING ERROR - Download failed, showing error
       ..state(
         'showingError',
         (s) => s
           ..on<RequestRetryEvent>('waitingForDownload')
-          ..on<ResetUIEvent>('browsing', actions: [
-            (ctx, _) => ctx.copyWith(selectedFile: ''),
-          ]),
+          ..on<ResetUIEvent>(
+            'browsing',
+            actions: [(ctx, _) => ctx.copyWith(selectedFile: '')],
+          ),
       ),
     id: 'ui',
   );
@@ -607,7 +631,8 @@ class _DownloadScreenState extends State<DownloadScreen> {
   }
 
   Widget _buildFileSelector(StateSnapshot<UIContext> uiState) {
-    final isEnabled = uiState.value.matches('browsing') ||
+    final isEnabled =
+        uiState.value.matches('browsing') ||
         uiState.value.matches('showingResult');
 
     return Card(
@@ -646,10 +671,12 @@ class _DownloadScreenState extends State<DownloadScreen> {
                   selected: isSelected,
                   onSelected: isEnabled
                       ? (_) {
-                          _coordinator.uiActor.send(SelectFileEvent(
-                            filename: file,
-                            url: 'https://example.com/$file',
-                          ));
+                          _coordinator.uiActor.send(
+                            SelectFileEvent(
+                              filename: file,
+                              url: 'https://example.com/$file',
+                            ),
+                          );
                         }
                       : null,
                 );
@@ -661,8 +688,8 @@ class _DownloadScreenState extends State<DownloadScreen> {
                 child: Text(
                   '* Files marked with warning will simulate a download failure',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.orange.shade700,
-                      ),
+                    color: Colors.orange.shade700,
+                  ),
                 ),
               ),
           ],
@@ -693,9 +720,9 @@ class _DownloadScreenState extends State<DownloadScreen> {
                 if (isDownloading)
                   Text(
                     '${(progress * 100).toInt()}%',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Colors.blue,
-                        ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.titleMedium?.copyWith(color: Colors.blue),
                   ),
                 if (isCompleted)
                   Row(
@@ -704,10 +731,9 @@ class _DownloadScreenState extends State<DownloadScreen> {
                       const SizedBox(width: 4),
                       Text(
                         'Complete!',
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  color: Colors.green,
-                                ),
+                        style: Theme.of(
+                          context,
+                        ).textTheme.titleMedium?.copyWith(color: Colors.green),
                       ),
                     ],
                   ),
@@ -718,10 +744,9 @@ class _DownloadScreenState extends State<DownloadScreen> {
                       const SizedBox(width: 4),
                       Text(
                         'Failed',
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  color: Colors.red,
-                                ),
+                        style: Theme.of(
+                          context,
+                        ).textTheme.titleMedium?.copyWith(color: Colors.red),
                       ),
                     ],
                   ),
@@ -738,8 +763,8 @@ class _DownloadScreenState extends State<DownloadScreen> {
                   isError
                       ? Colors.red
                       : isCompleted
-                          ? Colors.green
-                          : Colors.blue,
+                      ? Colors.green
+                      : Colors.blue,
                 ),
               ),
             ),
@@ -774,13 +799,15 @@ class _DownloadScreenState extends State<DownloadScreen> {
     StateSnapshot<DownloadContext> downloadState,
     StateSnapshot<UIContext> uiState,
   ) {
-    final canStartDownload = uiState.value.matches('browsing') &&
+    final canStartDownload =
+        uiState.value.matches('browsing') &&
         uiState.context.selectedFile.isNotEmpty &&
         downloadState.value.matches('idle');
 
     final canCancel = downloadState.value.matches('downloading');
     final canRetry = downloadState.value.matches('error');
-    final canReset = downloadState.value.matches('completed') ||
+    final canReset =
+        downloadState.value.matches('completed') ||
         downloadState.value.matches('error');
 
     return Wrap(
@@ -794,10 +821,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
               ? () {
                   final file = uiState.context.selectedFile;
                   _coordinator.uiActor.send(RequestDownloadEvent());
-                  _coordinator.startDownload(
-                    file,
-                    'https://example.com/$file',
-                  );
+                  _coordinator.startDownload(file, 'https://example.com/$file');
                 }
               : null,
           icon: const Icon(Icons.download),
@@ -857,9 +881,9 @@ class _DownloadScreenState extends State<DownloadScreen> {
           const SizedBox(width: 8),
           Text(
             'Total Downloads: ${uiState.context.downloadCount}',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.indigo,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(color: Colors.indigo),
           ),
         ],
       ),

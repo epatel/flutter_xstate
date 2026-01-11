@@ -36,7 +36,8 @@ class StateMachineBuilder<TContext, TEvent extends XEvent>
     BuildContext context,
     StateSnapshot<TContext> state,
     SendEvent<TEvent> send,
-  ) builder;
+  )
+  builder;
 
   /// Optional condition to determine if the widget should rebuild.
   ///
@@ -45,18 +46,17 @@ class StateMachineBuilder<TContext, TEvent extends XEvent>
   final bool Function(
     StateSnapshot<TContext> previous,
     StateSnapshot<TContext> current,
-  )? buildWhen;
+  )?
+  buildWhen;
 
-  const StateMachineBuilder({
-    super.key,
-    required this.builder,
-    this.buildWhen,
-  });
+  const StateMachineBuilder({super.key, required this.builder, this.buildWhen});
 
   @override
   Widget build(BuildContext context) {
-    return Selector<StateMachineActor<TContext, TEvent>,
-        StateSnapshot<TContext>>(
+    return Selector<
+      StateMachineActor<TContext, TEvent>,
+      StateSnapshot<TContext>
+    >(
       selector: (_, actor) => actor.snapshot,
       shouldRebuild: buildWhen ?? (previous, current) => previous != current,
       builder: (context, state, child) {
@@ -89,14 +89,16 @@ class StateMachineMatchBuilder<TContext, TEvent extends XEvent>
     BuildContext context,
     StateSnapshot<TContext> state,
     SendEvent<TEvent> send,
-  ) matchBuilder;
+  )
+  matchBuilder;
 
   /// Builder when the state does not match.
   final Widget Function(
     BuildContext context,
     StateSnapshot<TContext> state,
     SendEvent<TEvent> send,
-  )? orElse;
+  )?
+  orElse;
 
   const StateMachineMatchBuilder({
     super.key,
@@ -137,25 +139,24 @@ class StateMachineCaseBuilder<TContext, TEvent extends XEvent>
     extends StatelessWidget {
   /// Map of state IDs to builder functions.
   final Map<
-      String,
-      Widget Function(
-        BuildContext context,
-        StateSnapshot<TContext> state,
-        SendEvent<TEvent> send,
-      )> cases;
+    String,
+    Widget Function(
+      BuildContext context,
+      StateSnapshot<TContext> state,
+      SendEvent<TEvent> send,
+    )
+  >
+  cases;
 
   /// Builder when no case matches.
   final Widget Function(
     BuildContext context,
     StateSnapshot<TContext> state,
     SendEvent<TEvent> send,
-  )? orElse;
+  )?
+  orElse;
 
-  const StateMachineCaseBuilder({
-    super.key,
-    required this.cases,
-    this.orElse,
-  });
+  const StateMachineCaseBuilder({super.key, required this.cases, this.orElse});
 
   @override
   Widget build(BuildContext context) {
@@ -195,14 +196,16 @@ class StateMachineContextBuilder<TContext, TEvent extends XEvent>
     BuildContext context,
     StateSnapshot<TContext> state,
     SendEvent<TEvent> send,
-  ) builder;
+  )
+  builder;
 
   /// Builder when the condition is false.
   final Widget Function(
     BuildContext context,
     StateSnapshot<TContext> state,
     SendEvent<TEvent> send,
-  )? orElse;
+  )?
+  orElse;
 
   const StateMachineContextBuilder({
     super.key,

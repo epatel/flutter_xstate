@@ -38,15 +38,19 @@ void main() {
       (m) => m
         ..context(const CounterContext())
         ..initial('active')
-        ..state('active', (s) => s
-          ..on<IncrementEvent>('active', actions: [
-            (ctx, _) => ctx.copyWith(count: ctx.count + 1),
-          ])
-          ..on<DecrementEvent>('active',
+        ..state(
+          'active',
+          (s) => s
+            ..on<IncrementEvent>(
+              'active',
+              actions: [(ctx, _) => ctx.copyWith(count: ctx.count + 1)],
+            )
+            ..on<DecrementEvent>(
+              'active',
               guard: (ctx, _) => ctx.count > 0,
-              actions: [
-                (ctx, _) => ctx.copyWith(count: ctx.count - 1),
-              ])),
+              actions: [(ctx, _) => ctx.copyWith(count: ctx.count - 1)],
+            ),
+        ),
       id: 'counter',
     );
   });
@@ -76,10 +80,7 @@ void main() {
       actor.start();
       actor.stop();
 
-      expect(
-        () => actor.start(),
-        throwsA(isA<StateError>()),
-      );
+      expect(() => actor.start(), throwsA(isA<StateError>()));
     });
 
     test('stop sets stopped flag', () {
@@ -182,10 +183,14 @@ void main() {
         (m) => m
           ..context(const CounterContext())
           ..initial('active')
-          ..state('active', (s) => s
-            ..on<IncrementEvent>('done', actions: [
-              (ctx, _) => ctx.copyWith(count: 1),
-            ]))
+          ..state(
+            'active',
+            (s) => s
+              ..on<IncrementEvent>(
+                'done',
+                actions: [(ctx, _) => ctx.copyWith(count: 1)],
+              ),
+          )
           ..state('done', (s) => s..final_()),
         id: 'counter',
       );

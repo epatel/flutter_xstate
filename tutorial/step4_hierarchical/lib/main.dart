@@ -34,13 +34,12 @@ class PlayerContext {
     int? duration,
     double? volume,
     bool clearTrack = false,
-  }) =>
-      PlayerContext(
-        currentTrack: clearTrack ? null : (currentTrack ?? this.currentTrack),
-        position: position ?? this.position,
-        duration: duration ?? this.duration,
-        volume: volume ?? this.volume,
-      );
+  }) => PlayerContext(
+    currentTrack: clearTrack ? null : (currentTrack ?? this.currentTrack),
+    position: position ?? this.position,
+    duration: duration ?? this.duration,
+    volume: volume ?? this.volume,
+  );
 
   String get positionDisplay {
     final mins = position ~/ 60;
@@ -117,32 +116,30 @@ final playerMachine = StateMachine.create<PlayerContext, PlayerEvent>(
   (m) => m
     ..context(const PlayerContext())
     ..initial('stopped')
-
     // STOPPED - No track loaded or playback stopped
     ..state(
       'stopped',
       (s) => s
-        ..entry([
-          (ctx, _) => ctx.copyWith(position: 0, clearTrack: true),
-        ])
-        ..on<LoadTrackEvent>('active.paused', actions: [
-          (ctx, event) {
-            final e = event as LoadTrackEvent;
-            return ctx.copyWith(
-              currentTrack: e.track,
-              duration: e.duration,
-              position: 0,
-            );
-          },
-        ]),
+        ..entry([(ctx, _) => ctx.copyWith(position: 0, clearTrack: true)])
+        ..on<LoadTrackEvent>(
+          'active.paused',
+          actions: [
+            (ctx, event) {
+              final e = event as LoadTrackEvent;
+              return ctx.copyWith(
+                currentTrack: e.track,
+                duration: e.duration,
+                position: 0,
+              );
+            },
+          ],
+        ),
     )
-
     // ACTIVE - Compound state containing playing/paused
     ..state(
       'active',
       (s) => s
         ..initial('paused') // Default child state
-
         // Entry action for the parent state
         ..entry([
           (ctx, _) {
@@ -150,7 +147,6 @@ final playerMachine = StateMachine.create<PlayerContext, PlayerEvent>(
             return ctx;
           },
         ])
-
         // Exit action for the parent state
         ..exit([
           (ctx, _) {
@@ -158,55 +154,59 @@ final playerMachine = StateMachine.create<PlayerContext, PlayerEvent>(
             return ctx;
           },
         ])
-
         // These transitions are available in ANY child state
         ..on<StopEvent>('stopped')
-        ..on<LoadTrackEvent>('active.paused', actions: [
-          (ctx, event) {
-            final e = event as LoadTrackEvent;
-            return ctx.copyWith(
-              currentTrack: e.track,
-              duration: e.duration,
-              position: 0,
-            );
-          },
-        ])
-        ..on<SeekEvent>(null, actions: [
-          (ctx, event) {
-            final e = event as SeekEvent;
-            return ctx.copyWith(
-              position: e.position.clamp(0, ctx.duration),
-            );
-          },
-        ])
-        ..on<VolumeEvent>(null, actions: [
-          (ctx, event) {
-            final e = event as VolumeEvent;
-            return ctx.copyWith(volume: e.volume.clamp(0.0, 1.0));
-          },
-        ])
-
+        ..on<LoadTrackEvent>(
+          'active.paused',
+          actions: [
+            (ctx, event) {
+              final e = event as LoadTrackEvent;
+              return ctx.copyWith(
+                currentTrack: e.track,
+                duration: e.duration,
+                position: 0,
+              );
+            },
+          ],
+        )
+        ..on<SeekEvent>(
+          null,
+          actions: [
+            (ctx, event) {
+              final e = event as SeekEvent;
+              return ctx.copyWith(position: e.position.clamp(0, ctx.duration));
+            },
+          ],
+        )
+        ..on<VolumeEvent>(
+          null,
+          actions: [
+            (ctx, event) {
+              final e = event as VolumeEvent;
+              return ctx.copyWith(volume: e.volume.clamp(0.0, 1.0));
+            },
+          ],
+        )
         // PLAYING - Nested state
         ..state(
           'playing',
           (child) => child
             ..on<PauseEvent>('active.paused')
-            ..on<TickEvent>(null, actions: [
-              (ctx, _) {
-                final newPos = ctx.position + 1;
-                if (newPos >= ctx.duration) {
-                  return ctx.copyWith(position: ctx.duration);
-                }
-                return ctx.copyWith(position: newPos);
-              },
-            ]),
+            ..on<TickEvent>(
+              null,
+              actions: [
+                (ctx, _) {
+                  final newPos = ctx.position + 1;
+                  if (newPos >= ctx.duration) {
+                    return ctx.copyWith(position: ctx.duration);
+                  }
+                  return ctx.copyWith(position: newPos);
+                },
+              ],
+            ),
         )
-
         // PAUSED - Nested state
-        ..state(
-          'paused',
-          (child) => child..on<PlayEvent>('active.playing'),
-        ),
+        ..state('paused', (child) => child..on<PlayEvent>('active.playing')),
     ),
   id: 'player',
 );
@@ -362,7 +362,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
                           children: [
                             // Stop button
                             IconButton(
-                              onPressed: isActive ? () => send(StopEvent()) : null,
+                              onPressed: isActive
+                                  ? () => send(StopEvent())
+                                  : null,
                               icon: const Icon(Icons.stop),
                               iconSize: 32,
                             ),
@@ -373,7 +375,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
                               onPressed: () {
                                 if (isStopped) {
                                   // Load a sample track
-                                  send(LoadTrackEvent('Sample Track', duration: 180));
+                                  send(
+                                    LoadTrackEvent(
+                                      'Sample Track',
+                                      duration: 180,
+                                    ),
+                                  );
                                 } else if (isPlaying) {
                                   send(PauseEvent());
                                 } else {
@@ -384,8 +391,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
                                 isStopped
                                     ? Icons.play_arrow
                                     : isPlaying
-                                        ? Icons.pause
-                                        : Icons.play_arrow,
+                                    ? Icons.pause
+                                    : Icons.play_arrow,
                               ),
                               iconSize: 48,
                               style: IconButton.styleFrom(
@@ -397,7 +404,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
                             // Tick button (simulate time passing)
                             IconButton(
-                              onPressed: isPlaying ? () => send(TickEvent()) : null,
+                              onPressed: isPlaying
+                                  ? () => send(TickEvent())
+                                  : null,
                               icon: const Icon(Icons.fast_forward),
                               iconSize: 32,
                               tooltip: 'Advance 1 second',
@@ -423,20 +432,23 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         _TrackTile(
                           title: 'Ambient Dreams',
                           duration: 240,
-                          onTap: () =>
-                              send(LoadTrackEvent('Ambient Dreams', duration: 240)),
+                          onTap: () => send(
+                            LoadTrackEvent('Ambient Dreams', duration: 240),
+                          ),
                         ),
                         _TrackTile(
                           title: 'Electronic Pulse',
                           duration: 180,
-                          onTap: () =>
-                              send(LoadTrackEvent('Electronic Pulse', duration: 180)),
+                          onTap: () => send(
+                            LoadTrackEvent('Electronic Pulse', duration: 180),
+                          ),
                         ),
                         _TrackTile(
                           title: 'Acoustic Session',
                           duration: 300,
-                          onTap: () =>
-                              send(LoadTrackEvent('Acoustic Session', duration: 300)),
+                          onTap: () => send(
+                            LoadTrackEvent('Acoustic Session', duration: 300),
+                          ),
                         ),
                       ],
                     ),
@@ -492,9 +504,9 @@ class _StateTree extends StatelessWidget {
         children: [
           Text(
             'State Hierarchy',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: Colors.grey[400],
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(color: Colors.grey[400]),
           ),
           const SizedBox(height: 12),
           Row(
@@ -526,7 +538,9 @@ class _StateTree extends StatelessWidget {
                       'active',
                       style: TextStyle(
                         color: isActive ? Colors.purple : Colors.grey[500],
-                        fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isActive
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                     ),
                     const SizedBox(height: 8),

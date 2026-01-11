@@ -40,18 +40,24 @@ void main() {
         (m) => m
           ..context(const TestContext())
           ..initial('player')
-          ..state('player', (s) => s
-            ..parallel()
-            ..state('playback', (s) => s
-              ..initial('paused')
-              ..state('paused', (s) {})
-              ..state('playing', (s) {})
-            )
-            ..state('volume', (s) => s
-              ..initial('unmuted')
-              ..state('unmuted', (s) {})
-              ..state('muted', (s) {})
-            )
+          ..state(
+            'player',
+            (s) => s
+              ..parallel()
+              ..state(
+                'playback',
+                (s) => s
+                  ..initial('paused')
+                  ..state('paused', (s) {})
+                  ..state('playing', (s) {}),
+              )
+              ..state(
+                'volume',
+                (s) => s
+                  ..initial('unmuted')
+                  ..state('unmuted', (s) {})
+                  ..state('muted', (s) {}),
+              ),
           ),
         id: 'test',
       );
@@ -117,22 +123,30 @@ void main() {
         (m) => m
           ..context(const TestContext())
           ..initial('player')
-          ..state('player', (s) => s
-            ..parallel()
-            ..state('playback', (s) => s
-              ..initial('idle')
-              ..state('idle', (s) => s..on<PlayEvent>('playing'))
-              ..state('playing', (s) => s
-                ..initial('normal')
-                ..state('normal', (s) {})
-                ..state('fast', (s) {})
+          ..state(
+            'player',
+            (s) => s
+              ..parallel()
+              ..state(
+                'playback',
+                (s) => s
+                  ..initial('idle')
+                  ..state('idle', (s) => s..on<PlayEvent>('playing'))
+                  ..state(
+                    'playing',
+                    (s) => s
+                      ..initial('normal')
+                      ..state('normal', (s) {})
+                      ..state('fast', (s) {}),
+                  ),
               )
-            )
-            ..state('audio', (s) => s
-              ..initial('unmuted')
-              ..state('unmuted', (s) {})
-              ..state('muted', (s) {})
-            )
+              ..state(
+                'audio',
+                (s) => s
+                  ..initial('unmuted')
+                  ..state('unmuted', (s) {})
+                  ..state('muted', (s) {}),
+              ),
           ),
         id: 'test',
       );

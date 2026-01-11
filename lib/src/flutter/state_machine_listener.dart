@@ -30,10 +30,8 @@ class StateMachineListener<TContext, TEvent extends XEvent>
   ///
   /// This is called after the state has changed but before the frame is drawn.
   /// Use this for side effects like navigation, showing dialogs, etc.
-  final void Function(
-    BuildContext context,
-    StateSnapshot<TContext> state,
-  ) listener;
+  final void Function(BuildContext context, StateSnapshot<TContext> state)
+  listener;
 
   /// Optional condition to determine when to call the listener.
   ///
@@ -41,7 +39,8 @@ class StateMachineListener<TContext, TEvent extends XEvent>
   final bool Function(
     StateSnapshot<TContext> previous,
     StateSnapshot<TContext> current,
-  )? listenWhen;
+  )?
+  listenWhen;
 
   /// The child widget.
   final Widget child;
@@ -91,11 +90,8 @@ class _StateMachineListenerState<TContext, TEvent extends XEvent>
 
   void _onStateChange() {
     final currentState = _actor.snapshot;
-    final shouldListen = widget.listenWhen?.call(
-          _previousState!,
-          currentState,
-        ) ??
-        true;
+    final shouldListen =
+        widget.listenWhen?.call(_previousState!, currentState) ?? true;
 
     if (shouldListen) {
       widget.listener(context, currentState);
@@ -128,16 +124,12 @@ class StateMachineStateListener<TContext, TEvent extends XEvent>
   final String stateId;
 
   /// Callback when the state is entered.
-  final void Function(
-    BuildContext context,
-    StateSnapshot<TContext> state,
-  )? onEnter;
+  final void Function(BuildContext context, StateSnapshot<TContext> state)?
+  onEnter;
 
   /// Callback when the state is exited.
-  final void Function(
-    BuildContext context,
-    StateSnapshot<TContext> state,
-  )? onExit;
+  final void Function(BuildContext context, StateSnapshot<TContext> state)?
+  onExit;
 
   /// The child widget.
   final Widget child;
@@ -184,10 +176,8 @@ class StateMachineStateListener<TContext, TEvent extends XEvent>
 class StateMachineDoneListener<TContext, TEvent extends XEvent>
     extends StatelessWidget {
   /// Callback when the machine reaches a final state.
-  final void Function(
-    BuildContext context,
-    StateSnapshot<TContext> state,
-  ) onDone;
+  final void Function(BuildContext context, StateSnapshot<TContext> state)
+  onDone;
 
   /// The child widget.
   final Widget child;
@@ -232,7 +222,8 @@ class StateMachineValueListener<TContext, TEvent extends XEvent, TValue>
     BuildContext context,
     StateSnapshot<TContext> state,
     TValue value,
-  ) listener;
+  )
+  listener;
 
   /// The child widget.
   final Widget child;

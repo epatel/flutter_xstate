@@ -86,10 +86,7 @@ class DelayedTransitionEvent extends XEvent {
   /// The target state.
   final String target;
 
-  DelayedTransitionEvent({
-    this.transitionId,
-    required this.target,
-  });
+  DelayedTransitionEvent({this.transitionId, required this.target});
 
   @override
   String get type => 'xstate.delayed.$target';
@@ -97,8 +94,10 @@ class DelayedTransitionEvent extends XEvent {
 
 /// Manages delayed and periodic transitions for a state.
 class DelayedTransitionManager<TContext, TEvent extends XEvent> {
-  final List<DelayedTransitionConfig<TContext, TEvent>> _delayedTransitions = [];
-  final List<PeriodicTransitionConfig<TContext, TEvent>> _periodicTransitions = [];
+  final List<DelayedTransitionConfig<TContext, TEvent>> _delayedTransitions =
+      [];
+  final List<PeriodicTransitionConfig<TContext, TEvent>> _periodicTransitions =
+      [];
   final Map<String, Timer> _activeTimers = {};
   final void Function(XEvent event) _sendEvent;
 
@@ -122,13 +121,17 @@ class DelayedTransitionManager<TContext, TEvent extends XEvent> {
         continue;
       }
 
-      final timerId = config.id ?? 'delayed_${config.target}_${config.delay.inMilliseconds}';
+      final timerId =
+          config.id ??
+          'delayed_${config.target}_${config.delay.inMilliseconds}';
 
       _activeTimers[timerId] = Timer(config.delay, () {
-        _sendEvent(DelayedTransitionEvent(
-          transitionId: config.id,
-          target: config.target,
-        ));
+        _sendEvent(
+          DelayedTransitionEvent(
+            transitionId: config.id,
+            target: config.target,
+          ),
+        );
       });
     }
 
@@ -179,7 +182,8 @@ class DelayedTransitionManager<TContext, TEvent extends XEvent> {
 }
 
 /// Extension to create delayed transition configurations.
-extension DelayedTransitionExtension<TContext, TEvent extends XEvent> on Duration {
+extension DelayedTransitionExtension<TContext, TEvent extends XEvent>
+    on Duration {
   /// Create a delayed transition configuration.
   DelayedTransitionConfig<TContext, TEvent> after(
     String target, {
@@ -198,7 +202,8 @@ extension DelayedTransitionExtension<TContext, TEvent extends XEvent> on Duratio
 }
 
 /// Helper function to create a delayed transition.
-DelayedTransitionConfig<TContext, TEvent> after<TContext, TEvent extends XEvent>(
+DelayedTransitionConfig<TContext, TEvent>
+after<TContext, TEvent extends XEvent>(
   Duration delay,
   String target, {
   bool Function(TContext context)? guard,
@@ -215,7 +220,8 @@ DelayedTransitionConfig<TContext, TEvent> after<TContext, TEvent extends XEvent>
 }
 
 /// Helper function to create a periodic transition.
-PeriodicTransitionConfig<TContext, TEvent> every<TContext, TEvent extends XEvent>(
+PeriodicTransitionConfig<TContext, TEvent>
+every<TContext, TEvent extends XEvent>(
   Duration interval,
   TEvent Function(TContext context) eventFactory, {
   bool Function(TContext context)? guard,

@@ -57,8 +57,7 @@ Guard<TContext, TEvent> or<TContext, TEvent extends XEvent>(
 }
 
 /// A guard that returns true if any child guard returns true.
-class OrGuard<TContext, TEvent extends XEvent>
-    extends Guard<TContext, TEvent> {
+class OrGuard<TContext, TEvent extends XEvent> extends Guard<TContext, TEvent> {
   final List<Guard<TContext, TEvent>> guards;
 
   const OrGuard(this.guards);

@@ -34,8 +34,8 @@ class SpawnConfig<TChildContext, TChildEvent extends XEvent> {
     required String Function(dynamic context, dynamic event) id,
     required this.machine,
     this.autoStart = true,
-  })  : id = '',
-        idFromContext = id;
+  }) : id = '',
+       idFromContext = id;
 
   /// Get the actual id to use, resolving dynamic ids.
   String resolveId(dynamic context, dynamic event) {
@@ -63,8 +63,13 @@ class SpawnConfig<TChildContext, TChildEvent extends XEvent> {
 ///   ])
 /// )
 /// ```
-class SpawnAction<TContext, TEvent extends XEvent, TChildContext,
-    TChildEvent extends XEvent> extends Action<TContext, TEvent> {
+class SpawnAction<
+  TContext,
+  TEvent extends XEvent,
+  TChildContext,
+  TChildEvent extends XEvent
+>
+    extends Action<TContext, TEvent> {
   /// The spawn configuration.
   final SpawnConfig<TChildContext, TChildEvent> config;
 
@@ -84,22 +89,24 @@ class SpawnAction<TContext, TEvent extends XEvent, TChildContext,
 }
 
 /// Action result that includes spawn configuration.
-class SpawnActionResult<TContext, TEvent extends XEvent, TChildContext,
-    TChildEvent extends XEvent> extends ActionResult<TContext, TEvent> {
+class SpawnActionResult<
+  TContext,
+  TEvent extends XEvent,
+  TChildContext,
+  TChildEvent extends XEvent
+>
+    extends ActionResult<TContext, TEvent> {
   /// The spawn configuration to execute.
   final SpawnConfig<TChildContext, TChildEvent> spawnConfig;
 
-  const SpawnActionResult({
-    required super.context,
-    required this.spawnConfig,
-  });
+  const SpawnActionResult({required super.context, required this.spawnConfig});
 
   @override
   ActionResult<TContext, TEvent> merge(ActionResult<TContext, TEvent> other) {
     final base = super.merge(other);
     // If other is also a spawn result, we need special handling
-    if (other is SpawnActionResult<TContext, TEvent, TChildContext,
-        TChildEvent>) {
+    if (other
+        is SpawnActionResult<TContext, TEvent, TChildContext, TChildEvent>) {
       // Both are spawn results - would need a list, for now keep latest
       return SpawnActionResult(
         context: base.context,
@@ -107,10 +114,7 @@ class SpawnActionResult<TContext, TEvent extends XEvent, TChildContext,
       );
     }
     // Keep spawn config from this result
-    return SpawnActionResult(
-      context: base.context,
-      spawnConfig: spawnConfig,
-    );
+    return SpawnActionResult(context: base.context, spawnConfig: spawnConfig);
   }
 }
 
@@ -126,11 +130,12 @@ class SpawnActionResult<TContext, TEvent extends XEvent, TChildContext,
 ///   ])
 /// )
 /// ```
-SpawnAction<TContext, TEvent, TChildContext, TChildEvent>
-    spawn<TContext, TEvent extends XEvent, TChildContext,
-            TChildEvent extends XEvent>(
-  SpawnConfig<TChildContext, TChildEvent> config,
-) {
+SpawnAction<TContext, TEvent, TChildContext, TChildEvent> spawn<
+  TContext,
+  TEvent extends XEvent,
+  TChildContext,
+  TChildEvent extends XEvent
+>(SpawnConfig<TChildContext, TChildEvent> config) {
   return SpawnAction<TContext, TEvent, TChildContext, TChildEvent>(config);
 }
 
@@ -182,29 +187,31 @@ class StopChildActionResult<TContext, TEvent extends XEvent>
   /// The ID of the child actor to stop.
   final String childId;
 
-  const StopChildActionResult({
-    required super.context,
-    required this.childId,
-  });
+  const StopChildActionResult({required super.context, required this.childId});
 }
 
 /// Create an action to stop a child actor.
-StopChildAction<TContext, TEvent>
-    stopChild<TContext, TEvent extends XEvent>(String childId) {
+StopChildAction<TContext, TEvent> stopChild<TContext, TEvent extends XEvent>(
+  String childId,
+) {
   return StopChildAction<TContext, TEvent>(childId);
 }
 
 /// Create an action to stop a child actor with dynamic ID.
-StopChildAction<TContext, TEvent>
-    stopChildDynamic<TContext, TEvent extends XEvent>(
-  String Function(TContext context, TEvent event) idFromContext,
-) {
+StopChildAction<TContext, TEvent> stopChildDynamic<
+  TContext,
+  TEvent extends XEvent
+>(String Function(TContext context, TEvent event) idFromContext) {
   return StopChildAction<TContext, TEvent>.dynamic(idFromContext);
 }
 
 /// An action that sends an event to a child actor.
-class SendToChildAction<TContext, TEvent extends XEvent,
-    TChildEvent extends XEvent> extends Action<TContext, TEvent> {
+class SendToChildAction<
+  TContext,
+  TEvent extends XEvent,
+  TChildEvent extends XEvent
+>
+    extends Action<TContext, TEvent> {
   /// The ID of the target child actor.
   final String childId;
 
@@ -214,11 +221,9 @@ class SendToChildAction<TContext, TEvent extends XEvent,
   /// Callback to create the event dynamically.
   final TChildEvent Function(TContext context, TEvent event)? eventFromContext;
 
-  const SendToChildAction({
-    required this.childId,
-    required TChildEvent event,
-  })  : _event = event,
-        eventFromContext = null;
+  const SendToChildAction({required this.childId, required TChildEvent event})
+    : _event = event,
+      eventFromContext = null;
 
   const SendToChildAction.dynamic({
     required this.childId,
@@ -247,8 +252,12 @@ class SendToChildAction<TContext, TEvent extends XEvent,
 }
 
 /// Action result that includes send to child configuration.
-class SendToChildActionResult<TContext, TEvent extends XEvent,
-    TChildEvent extends XEvent> extends ActionResult<TContext, TEvent> {
+class SendToChildActionResult<
+  TContext,
+  TEvent extends XEvent,
+  TChildEvent extends XEvent
+>
+    extends ActionResult<TContext, TEvent> {
   /// The ID of the target child actor.
   final String childId;
 
@@ -263,11 +272,11 @@ class SendToChildActionResult<TContext, TEvent extends XEvent,
 }
 
 /// Create an action to send an event to a child actor.
-SendToChildAction<TContext, TEvent, TChildEvent>
-    sendToChild<TContext, TEvent extends XEvent, TChildEvent extends XEvent>({
-  required String childId,
-  required TChildEvent event,
-}) {
+SendToChildAction<TContext, TEvent, TChildEvent> sendToChild<
+  TContext,
+  TEvent extends XEvent,
+  TChildEvent extends XEvent
+>({required String childId, required TChildEvent event}) {
   return SendToChildAction<TContext, TEvent, TChildEvent>(
     childId: childId,
     event: event,
@@ -278,23 +287,26 @@ SendToChildAction<TContext, TEvent, TChildEvent>
 ///
 /// Used to react when child actors complete or error.
 @immutable
-class ActorLifecycleHandler<TContext, TEvent extends XEvent, TChildContext,
-    TChildEvent extends XEvent> {
+class ActorLifecycleHandler<
+  TContext,
+  TEvent extends XEvent,
+  TChildContext,
+  TChildEvent extends XEvent
+> {
   /// Called when the child actor reaches a final state.
   final TContext Function(
     TContext context,
     MachineActorRef<TChildContext, TChildEvent> ref,
-  )? onDone;
+  )?
+  onDone;
 
   /// Called when the child actor errors.
   final TContext Function(
     TContext context,
     Object error,
     StackTrace? stackTrace,
-  )? onError;
+  )?
+  onError;
 
-  const ActorLifecycleHandler({
-    this.onDone,
-    this.onError,
-  });
+  const ActorLifecycleHandler({this.onDone, this.onError});
 }

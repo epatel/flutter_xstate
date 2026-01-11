@@ -16,7 +16,8 @@ class CounterContext {
 
   const CounterContext({this.count = 0, this.history = const []});
 
-  CounterContext copyWith({int? count, List<String>? history}) => CounterContext(
+  CounterContext copyWith({int? count, List<String>? history}) =>
+      CounterContext(
         count: count ?? this.count,
         history: history ?? this.history,
       );
@@ -76,28 +77,38 @@ final counterMachine = StateMachine.create<CounterContext, CounterEvent>(
             return ctx;
           },
         ])
-        ..on<IncrementEvent>('active', actions: [
-          (ctx, event) {
-            final e = event as IncrementEvent;
-            final newCount = ctx.count + e.amount;
-            print('  [Action] Incrementing by ${e.amount}: ${ctx.count} -> $newCount');
-            return ctx.copyWith(
-              count: newCount,
-              history: [...ctx.history, '+${e.amount}'],
-            );
-          },
-        ])
-        ..on<DecrementEvent>('active', actions: [
-          (ctx, event) {
-            final e = event as DecrementEvent;
-            final newCount = ctx.count - e.amount;
-            print('  [Action] Decrementing by ${e.amount}: ${ctx.count} -> $newCount');
-            return ctx.copyWith(
-              count: newCount,
-              history: [...ctx.history, '-${e.amount}'],
-            );
-          },
-        ])
+        ..on<IncrementEvent>(
+          'active',
+          actions: [
+            (ctx, event) {
+              final e = event as IncrementEvent;
+              final newCount = ctx.count + e.amount;
+              print(
+                '  [Action] Incrementing by ${e.amount}: ${ctx.count} -> $newCount',
+              );
+              return ctx.copyWith(
+                count: newCount,
+                history: [...ctx.history, '+${e.amount}'],
+              );
+            },
+          ],
+        )
+        ..on<DecrementEvent>(
+          'active',
+          actions: [
+            (ctx, event) {
+              final e = event as DecrementEvent;
+              final newCount = ctx.count - e.amount;
+              print(
+                '  [Action] Decrementing by ${e.amount}: ${ctx.count} -> $newCount',
+              );
+              return ctx.copyWith(
+                count: newCount,
+                history: [...ctx.history, '-${e.amount}'],
+              );
+            },
+          ],
+        )
         ..on<ResetEvent>('idle'),
     )
     ..state(
@@ -109,12 +120,15 @@ final counterMachine = StateMachine.create<CounterContext, CounterEvent>(
             return ctx.copyWith(count: 0, history: []);
           },
         ])
-        ..on<IncrementEvent>('active', actions: [
-          (ctx, event) {
-            final e = event as IncrementEvent;
-            return ctx.copyWith(count: e.amount, history: ['+${e.amount}']);
-          },
-        ]),
+        ..on<IncrementEvent>(
+          'active',
+          actions: [
+            (ctx, event) {
+              final e = event as IncrementEvent;
+              return ctx.copyWith(count: e.amount, history: ['+${e.amount}']);
+            },
+          ],
+        ),
     ),
   id: 'counter',
 );

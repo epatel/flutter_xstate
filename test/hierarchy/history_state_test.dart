@@ -41,9 +41,7 @@ void main() {
     });
 
     test('clears history', () {
-      const manager = HistoryManager({
-        'parent': AtomicStateValue('child'),
-      });
+      const manager = HistoryManager({'parent': AtomicStateValue('child')});
 
       final cleared = manager.clearHistory('parent');
 
@@ -51,18 +49,14 @@ void main() {
     });
 
     test('toMap returns unmodifiable map', () {
-      const manager = HistoryManager({
-        'parent': AtomicStateValue('child'),
-      });
+      const manager = HistoryManager({'parent': AtomicStateValue('child')});
 
       final map = manager.toMap();
       expect(map['parent'], isA<AtomicStateValue>());
     });
 
     test('fromMap creates manager from map', () {
-      final map = {
-        'parent': const AtomicStateValue('child'),
-      };
+      final map = {'parent': const AtomicStateValue('child')};
 
       final manager = HistoryManager.fromMap(map);
       expect(manager.hasHistory('parent'), isTrue);
@@ -211,11 +205,13 @@ void main() {
         (m) => m
           ..context(const TestContext())
           ..initial('parent')
-          ..state('parent', (s) => s
-            ..initial('child1')
-            ..state('child1', (s) => s..on<NextEvent>('child2'))
-            ..state('child2', (s) => s..on<NextEvent>('child3'))
-            ..state('child3', (s) => s..on<BackEvent>('outside'))
+          ..state(
+            'parent',
+            (s) => s
+              ..initial('child1')
+              ..state('child1', (s) => s..on<NextEvent>('child2'))
+              ..state('child2', (s) => s..on<NextEvent>('child3'))
+              ..state('child3', (s) => s..on<BackEvent>('outside')),
           )
           ..state('outside', (s) => s..on<ToHistoryEvent>('parent')),
         id: 'test',
@@ -241,10 +237,7 @@ void main() {
     test('fullPath returns complete path string', () {
       const value = CompoundStateValue(
         'app',
-        CompoundStateValue(
-          'dashboard',
-          AtomicStateValue('overview'),
-        ),
+        CompoundStateValue('dashboard', AtomicStateValue('overview')),
       );
 
       expect(value.fullPath, equals('app.dashboard.overview'));
@@ -253,10 +246,7 @@ void main() {
     test('leafId returns innermost state id', () {
       const value = CompoundStateValue(
         'app',
-        CompoundStateValue(
-          'dashboard',
-          AtomicStateValue('overview'),
-        ),
+        CompoundStateValue('dashboard', AtomicStateValue('overview')),
       );
 
       expect(value.leafId, equals('overview'));

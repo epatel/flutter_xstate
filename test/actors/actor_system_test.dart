@@ -29,11 +29,14 @@ void main() {
       (m) => m
         ..context(const TestContext())
         ..initial('active')
-        ..state('active', (s) => s
-          ..on<IncrementEvent>('active', actions: [
-            (ctx, _) => ctx.copyWith(count: ctx.count + 1),
-          ])
-          ..on<StopEvent>('done')
+        ..state(
+          'active',
+          (s) => s
+            ..on<IncrementEvent>(
+              'active',
+              actions: [(ctx, _) => ctx.copyWith(count: ctx.count + 1)],
+            )
+            ..on<StopEvent>('done'),
         )
         ..state('done', (s) => s..final_()),
       id: 'test',
@@ -76,16 +79,11 @@ void main() {
     test('spawn throws if id already exists', () {
       final system = ActorSystem();
 
-      system.spawn<TestContext, TestEvent>(
-        id: 'child',
-        machine: machine,
-      );
+      system.spawn<TestContext, TestEvent>(id: 'child', machine: machine);
 
       expect(
-        () => system.spawn<TestContext, TestEvent>(
-          id: 'child',
-          machine: machine,
-        ),
+        () =>
+            system.spawn<TestContext, TestEvent>(id: 'child', machine: machine),
         throwsStateError,
       );
     });
@@ -93,10 +91,7 @@ void main() {
     test('getActor returns actor by id', () {
       final system = ActorSystem();
 
-      system.spawn<TestContext, TestEvent>(
-        id: 'child',
-        machine: machine,
-      );
+      system.spawn<TestContext, TestEvent>(id: 'child', machine: machine);
 
       final ref = system.getActor<TestEvent>('child');
       expect(ref, isNotNull);
@@ -111,10 +106,7 @@ void main() {
     test('stopActor stops actor and removes from registry', () async {
       final system = ActorSystem();
 
-      system.spawn<TestContext, TestEvent>(
-        id: 'child',
-        machine: machine,
-      );
+      system.spawn<TestContext, TestEvent>(id: 'child', machine: machine);
 
       expect(system.hasActor('child'), isTrue);
       system.stopActor('child');
@@ -148,10 +140,7 @@ void main() {
     test('parent-child relationships are tracked', () {
       final system = ActorSystem();
 
-      system.spawn<TestContext, TestEvent>(
-        id: 'parent',
-        machine: machine,
-      );
+      system.spawn<TestContext, TestEvent>(id: 'parent', machine: machine);
 
       system.spawn<TestContext, TestEvent>(
         id: 'child',
@@ -166,10 +155,7 @@ void main() {
     test('stopping parent stops children', () async {
       final system = ActorSystem();
 
-      system.spawn<TestContext, TestEvent>(
-        id: 'parent',
-        machine: machine,
-      );
+      system.spawn<TestContext, TestEvent>(id: 'parent', machine: machine);
 
       system.spawn<TestContext, TestEvent>(
         id: 'child',
@@ -188,15 +174,9 @@ void main() {
     test('dispose stops all actors', () async {
       final system = ActorSystem();
 
-      system.spawn<TestContext, TestEvent>(
-        id: 'actor1',
-        machine: machine,
-      );
+      system.spawn<TestContext, TestEvent>(id: 'actor1', machine: machine);
 
-      system.spawn<TestContext, TestEvent>(
-        id: 'actor2',
-        machine: machine,
-      );
+      system.spawn<TestContext, TestEvent>(id: 'actor2', machine: machine);
 
       expect(system.actorCount, equals(2));
 
@@ -212,10 +192,7 @@ void main() {
       var notified = 0;
       system.addListener(() => notified++);
 
-      system.spawn<TestContext, TestEvent>(
-        id: 'child',
-        machine: machine,
-      );
+      system.spawn<TestContext, TestEvent>(id: 'child', machine: machine);
 
       expect(notified, greaterThan(0));
     });

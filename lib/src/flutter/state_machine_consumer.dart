@@ -35,29 +35,30 @@ import 'state_machine_provider.dart';
 class StateMachineConsumer<TContext, TEvent extends XEvent>
     extends StatelessWidget {
   /// Listener callback for side effects.
-  final void Function(
-    BuildContext context,
-    StateSnapshot<TContext> state,
-  ) listener;
+  final void Function(BuildContext context, StateSnapshot<TContext> state)
+  listener;
 
   /// Builder function for the UI.
   final Widget Function(
     BuildContext context,
     StateSnapshot<TContext> state,
     SendEvent<TEvent> send,
-  ) builder;
+  )
+  builder;
 
   /// Optional condition for when to call the listener.
   final bool Function(
     StateSnapshot<TContext> previous,
     StateSnapshot<TContext> current,
-  )? listenWhen;
+  )?
+  listenWhen;
 
   /// Optional condition for when to rebuild.
   final bool Function(
     StateSnapshot<TContext> previous,
     StateSnapshot<TContext> current,
-  )? buildWhen;
+  )?
+  buildWhen;
 
   const StateMachineConsumer({
     super.key,
@@ -108,7 +109,8 @@ class StateMachineSelectorConsumer<TContext, TEvent extends XEvent, TSelected>
     BuildContext context,
     StateSnapshot<TContext> state,
     TSelected value,
-  ) listener;
+  )
+  listener;
 
   /// Builder function with the selected value.
   final Widget Function(
@@ -116,7 +118,8 @@ class StateMachineSelectorConsumer<TContext, TEvent extends XEvent, TSelected>
     StateSnapshot<TContext> state,
     TSelected value,
     SendEvent<TEvent> send,
-  ) builder;
+  )
+  builder;
 
   /// Optional condition for when to call the listener.
   final bool Function(TSelected previous, TSelected current)? listenWhen;
@@ -135,12 +138,15 @@ class StateMachineSelectorConsumer<TContext, TEvent extends XEvent, TSelected>
 
   @override
   State<StateMachineSelectorConsumer<TContext, TEvent, TSelected>>
-      createState() =>
-          _StateMachineSelectorConsumerState<TContext, TEvent, TSelected>();
+  createState() =>
+      _StateMachineSelectorConsumerState<TContext, TEvent, TSelected>();
 }
 
-class _StateMachineSelectorConsumerState<TContext, TEvent extends XEvent,
-        TSelected>
+class _StateMachineSelectorConsumerState<
+  TContext,
+  TEvent extends XEvent,
+  TSelected
+>
     extends State<StateMachineSelectorConsumer<TContext, TEvent, TSelected>> {
   @override
   Widget build(BuildContext context) {
@@ -150,9 +156,9 @@ class _StateMachineSelectorConsumerState<TContext, TEvent extends XEvent,
       child: StateMachineBuilder<TContext, TEvent>(
         buildWhen: widget.buildWhen != null
             ? (previous, current) => widget.buildWhen!(
-                  widget.selector(previous.context),
-                  widget.selector(current.context),
-                )
+                widget.selector(previous.context),
+                widget.selector(current.context),
+              )
             : null,
         builder: (context, state, send) {
           return widget.builder(
@@ -194,30 +200,28 @@ class StateMachineMatchConsumer<TContext, TEvent extends XEvent>
   final String stateId;
 
   /// Callback when entering the state.
-  final void Function(
-    BuildContext context,
-    StateSnapshot<TContext> state,
-  )? onEnter;
+  final void Function(BuildContext context, StateSnapshot<TContext> state)?
+  onEnter;
 
   /// Callback when exiting the state.
-  final void Function(
-    BuildContext context,
-    StateSnapshot<TContext> state,
-  )? onExit;
+  final void Function(BuildContext context, StateSnapshot<TContext> state)?
+  onExit;
 
   /// Builder when the state matches.
   final Widget Function(
     BuildContext context,
     StateSnapshot<TContext> state,
     SendEvent<TEvent> send,
-  ) matchBuilder;
+  )
+  matchBuilder;
 
   /// Builder when the state does not match.
   final Widget Function(
     BuildContext context,
     StateSnapshot<TContext> state,
     SendEvent<TEvent> send,
-  )? orElse;
+  )?
+  orElse;
 
   const StateMachineMatchConsumer({
     super.key,

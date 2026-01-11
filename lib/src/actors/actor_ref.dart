@@ -65,10 +65,7 @@ class MachineActorRef<TContext, TEvent extends XEvent>
 
   bool _stopped = false;
 
-  MachineActorRef({
-    required this.id,
-    required this.actor,
-  }) {
+  MachineActorRef({required this.id, required this.actor}) {
     // Forward actor lifecycle to status stream
     actor.addListener(_onActorChange);
   }
@@ -138,8 +135,8 @@ class CallbackActorRef<TData, TEvent extends XEvent>
     required this.id,
     void Function(TEvent event)? onReceive,
     void Function()? onStop,
-  })  : _onReceive = onReceive,
-        _onStop = onStop {
+  }) : _onReceive = onReceive,
+       _onStop = onStop {
     _statusController.add(ActorStatus.running);
   }
 

@@ -15,7 +15,8 @@ class CounterContext {
 
   const CounterContext({this.count = 0, this.history = const []});
 
-  CounterContext copyWith({int? count, List<String>? history}) => CounterContext(
+  CounterContext copyWith({int? count, List<String>? history}) =>
+      CounterContext(
         count: count ?? this.count,
         history: history ?? this.history,
       );
@@ -59,40 +60,47 @@ final counterMachine = StateMachine.create<CounterContext, CounterEvent>(
     ..state(
       'active',
       (s) => s
-        ..on<IncrementEvent>('active', actions: [
-          (ctx, event) {
-            final e = event as IncrementEvent;
-            final newCount = ctx.count + e.amount;
-            return ctx.copyWith(
-              count: newCount,
-              history: [...ctx.history, '+${e.amount}'],
-            );
-          },
-        ])
-        ..on<DecrementEvent>('active', actions: [
-          (ctx, event) {
-            final e = event as DecrementEvent;
-            final newCount = ctx.count - e.amount;
-            return ctx.copyWith(
-              count: newCount,
-              history: [...ctx.history, '-${e.amount}'],
-            );
-          },
-        ])
+        ..on<IncrementEvent>(
+          'active',
+          actions: [
+            (ctx, event) {
+              final e = event as IncrementEvent;
+              final newCount = ctx.count + e.amount;
+              return ctx.copyWith(
+                count: newCount,
+                history: [...ctx.history, '+${e.amount}'],
+              );
+            },
+          ],
+        )
+        ..on<DecrementEvent>(
+          'active',
+          actions: [
+            (ctx, event) {
+              final e = event as DecrementEvent;
+              final newCount = ctx.count - e.amount;
+              return ctx.copyWith(
+                count: newCount,
+                history: [...ctx.history, '-${e.amount}'],
+              );
+            },
+          ],
+        )
         ..on<ResetEvent>('idle'),
     )
     ..state(
       'idle',
       (s) => s
-        ..entry([
-          (ctx, event) => ctx.copyWith(count: 0, history: []),
-        ])
-        ..on<IncrementEvent>('active', actions: [
-          (ctx, event) {
-            final e = event as IncrementEvent;
-            return ctx.copyWith(count: e.amount, history: ['+${e.amount}']);
-          },
-        ]),
+        ..entry([(ctx, event) => ctx.copyWith(count: 0, history: [])])
+        ..on<IncrementEvent>(
+          'active',
+          actions: [
+            (ctx, event) {
+              final e = event as IncrementEvent;
+              return ctx.copyWith(count: e.amount, history: ['+${e.amount}']);
+            },
+          ],
+        ),
     ),
   id: 'counter',
 );
@@ -169,8 +177,8 @@ class CounterScreen extends StatelessWidget {
                 Text(
                   '${ctx.count}',
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 40),
 
@@ -225,10 +233,7 @@ class CounterScreen extends StatelessWidget {
                 const SizedBox(height: 40),
 
                 // History
-                Text(
-                  'History',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+                Text('History', style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 8),
                 Container(
                   padding: const EdgeInsets.all(16),

@@ -7,7 +7,8 @@ import '../events/x_event.dart';
 /// A redirect function type for go_router.
 ///
 /// This is an alias for go_router's redirect function signature.
-typedef StateRedirectFunction = String? Function(BuildContext context, GoRouterState state);
+typedef StateRedirectFunction =
+    String? Function(BuildContext context, GoRouterState state);
 
 /// Creates a redirect function that checks if the state machine matches a state.
 ///
@@ -174,11 +175,13 @@ class RedirectBuilder<TContext, TEvent extends XEvent> {
     String stateId, {
     required String redirectTo,
   }) {
-    _rules.add(_RedirectRule(
-      type: _RedirectRuleType.matches,
-      stateId: stateId,
-      redirectTo: redirectTo,
-    ));
+    _rules.add(
+      _RedirectRule(
+        type: _RedirectRuleType.matches,
+        stateId: stateId,
+        redirectTo: redirectTo,
+      ),
+    );
     return this;
   }
 
@@ -187,11 +190,13 @@ class RedirectBuilder<TContext, TEvent extends XEvent> {
     String stateId, {
     required String redirectTo,
   }) {
-    _rules.add(_RedirectRule(
-      type: _RedirectRuleType.notMatches,
-      stateId: stateId,
-      redirectTo: redirectTo,
-    ));
+    _rules.add(
+      _RedirectRule(
+        type: _RedirectRuleType.notMatches,
+        stateId: stateId,
+        redirectTo: redirectTo,
+      ),
+    );
     return this;
   }
 
@@ -200,11 +205,13 @@ class RedirectBuilder<TContext, TEvent extends XEvent> {
     bool Function(TContext context) condition, {
     required String redirectTo,
   }) {
-    _rules.add(_RedirectRule(
-      type: _RedirectRuleType.context,
-      condition: condition,
-      redirectTo: redirectTo,
-    ));
+    _rules.add(
+      _RedirectRule(
+        type: _RedirectRuleType.context,
+        condition: condition,
+        redirectTo: redirectTo,
+      ),
+    );
     return this;
   }
 
@@ -321,12 +328,16 @@ abstract class RedirectRule<TContext> {
   );
 
   /// Create a rule that redirects when state matches.
-  factory RedirectRule.whenMatches(String stateId, {required String redirectTo}) =
-      _MatchesRedirectRule<TContext>;
+  factory RedirectRule.whenMatches(
+    String stateId, {
+    required String redirectTo,
+  }) = _MatchesRedirectRule<TContext>;
 
   /// Create a rule that redirects when state doesn't match.
-  factory RedirectRule.whenNotMatches(String stateId, {required String redirectTo}) =
-      _NotMatchesRedirectRule<TContext>;
+  factory RedirectRule.whenNotMatches(
+    String stateId, {
+    required String redirectTo,
+  }) = _NotMatchesRedirectRule<TContext>;
 
   /// Create a rule that redirects based on context condition.
   factory RedirectRule.whenContext(

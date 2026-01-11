@@ -96,10 +96,7 @@ class CompoundStateValue extends StateValue {
   @override
   List<String> get activeStates {
     final childStates = child.activeStates;
-    return [
-      id,
-      ...childStates.map((s) => '$id.$s'),
-    ];
+    return [id, ...childStates.map((s) => '$id.$s')];
   }
 
   @override
@@ -197,8 +194,9 @@ class ParallelStateValue extends StateValue {
 
   @override
   String toString() {
-    final regionStrs =
-        regions.entries.map((e) => '${e.key}: ${e.value}').join(', ');
+    final regionStrs = regions.entries
+        .map((e) => '${e.key}: ${e.value}')
+        .join(', ');
     return 'StateValue($id, {$regionStrs})';
   }
 }

@@ -24,10 +24,13 @@ void main() {
       (m) => m
         ..context(const TestContext())
         ..initial('idle')
-        ..state('idle', (s) => s
-          ..on<IncrementEvent>('idle', actions: [
-            (ctx, _) => ctx.copyWith(count: ctx.count + 1),
-          ])
+        ..state(
+          'idle',
+          (s) => s
+            ..on<IncrementEvent>(
+              'idle',
+              actions: [(ctx, _) => ctx.copyWith(count: ctx.count + 1)],
+            ),
         ),
       id: 'child',
     );
@@ -61,7 +64,10 @@ void main() {
         machine: childMachine,
       );
 
-      final id = config.resolveId(const TestContext(count: 42), IncrementEvent());
+      final id = config.resolveId(
+        const TestContext(count: 42),
+        IncrementEvent(),
+      );
       expect(id, equals('child-42'));
     });
 
@@ -83,13 +89,24 @@ void main() {
         machine: childMachine,
       );
 
-      final action = SpawnAction<TestContext, TestEvent, TestContext, TestEvent>(config);
-      final result = action.execute(const TestContext(count: 5), IncrementEvent());
+      final action =
+          SpawnAction<TestContext, TestEvent, TestContext, TestEvent>(config);
+      final result = action.execute(
+        const TestContext(count: 5),
+        IncrementEvent(),
+      );
 
       expect(result, isA<SpawnActionResult>());
       expect(result.context.count, equals(5));
 
-      final spawnResult = result as SpawnActionResult<TestContext, TestEvent, TestContext, TestEvent>;
+      final spawnResult =
+          result
+              as SpawnActionResult<
+                TestContext,
+                TestEvent,
+                TestContext,
+                TestEvent
+              >;
       expect(spawnResult.spawnConfig, equals(config));
     });
 
@@ -99,7 +116,8 @@ void main() {
         machine: childMachine,
       );
 
-      final action = SpawnAction<TestContext, TestEvent, TestContext, TestEvent>(config);
+      final action =
+          SpawnAction<TestContext, TestEvent, TestContext, TestEvent>(config);
       expect(action.description, equals('spawn(my-child)'));
     });
   });
@@ -111,7 +129,9 @@ void main() {
         machine: childMachine,
       );
 
-      final action = spawn<TestContext, TestEvent, TestContext, TestEvent>(config);
+      final action = spawn<TestContext, TestEvent, TestContext, TestEvent>(
+        config,
+      );
       expect(action, isA<SpawnAction>());
     });
   });
@@ -122,13 +142,17 @@ void main() {
       final result = action.execute(const TestContext(), IncrementEvent());
 
       expect(result, isA<StopChildActionResult>());
-      final stopResult = result as StopChildActionResult<TestContext, TestEvent>;
+      final stopResult =
+          result as StopChildActionResult<TestContext, TestEvent>;
       expect(stopResult.childId, equals('child-to-stop'));
     });
 
     test('resolveId returns static id', () {
       final action = StopChildAction<TestContext, TestEvent>('static-id');
-      expect(action.resolveId(const TestContext(), IncrementEvent()), equals('static-id'));
+      expect(
+        action.resolveId(const TestContext(), IncrementEvent()),
+        equals('static-id'),
+      );
     });
 
     test('dynamic resolveId uses callback', () {
@@ -151,7 +175,10 @@ void main() {
     test('creates StopChildAction with static id', () {
       final action = stopChild<TestContext, TestEvent>('child');
       expect(action, isA<StopChildAction>());
-      expect(action.resolveId(const TestContext(), IncrementEvent()), equals('child'));
+      expect(
+        action.resolveId(const TestContext(), IncrementEvent()),
+        equals('child'),
+      );
     });
   });
 
@@ -177,7 +204,8 @@ void main() {
       final result = action.execute(const TestContext(), IncrementEvent());
 
       expect(result, isA<SendToChildActionResult>());
-      final sendResult = result as SendToChildActionResult<TestContext, TestEvent, TestEvent>;
+      final sendResult =
+          result as SendToChildActionResult<TestContext, TestEvent, TestEvent>;
       expect(sendResult.childId, equals('child'));
       expect(sendResult.childEvent, isA<IncrementEvent>());
     });
@@ -188,15 +216,22 @@ void main() {
         childId: 'child',
         event: event,
       );
-      expect(action.resolveEvent(const TestContext(), IncrementEvent()), equals(event));
+      expect(
+        action.resolveEvent(const TestContext(), IncrementEvent()),
+        equals(event),
+      );
     });
 
     test('dynamic resolveEvent uses callback', () {
-      final action = SendToChildAction<TestContext, TestEvent, TestEvent>.dynamic(
-        childId: 'child',
-        eventFromContext: (ctx, _) => IncrementEvent(),
+      final action =
+          SendToChildAction<TestContext, TestEvent, TestEvent>.dynamic(
+            childId: 'child',
+            eventFromContext: (ctx, _) => IncrementEvent(),
+          );
+      expect(
+        action.resolveEvent(const TestContext(), IncrementEvent()),
+        isA<IncrementEvent>(),
       );
-      expect(action.resolveEvent(const TestContext(), IncrementEvent()), isA<IncrementEvent>());
     });
 
     test('description includes child id', () {
@@ -220,17 +255,24 @@ void main() {
 
   group('ActorLifecycleHandler', () {
     test('creates handler with callbacks', () {
-      final handler = ActorLifecycleHandler<TestContext, TestEvent, TestContext, TestEvent>(
-        onDone: (ctx, ref) => ctx.copyWith(count: 99),
-        onError: (ctx, error, stackTrace) => ctx.copyWith(count: -1),
-      );
+      final handler =
+          ActorLifecycleHandler<TestContext, TestEvent, TestContext, TestEvent>(
+            onDone: (ctx, ref) => ctx.copyWith(count: 99),
+            onError: (ctx, error, stackTrace) => ctx.copyWith(count: -1),
+          );
 
       expect(handler.onDone, isNotNull);
       expect(handler.onError, isNotNull);
     });
 
     test('creates handler with no callbacks', () {
-      const handler = ActorLifecycleHandler<TestContext, TestEvent, TestContext, TestEvent>();
+      const handler =
+          ActorLifecycleHandler<
+            TestContext,
+            TestEvent,
+            TestContext,
+            TestEvent
+          >();
       expect(handler.onDone, isNull);
       expect(handler.onError, isNull);
     });

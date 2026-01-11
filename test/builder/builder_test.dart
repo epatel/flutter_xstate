@@ -83,11 +83,14 @@ void main() {
         (m) => m
           ..context(const AppContext())
           ..initial('traffic')
-          ..state('traffic', (s) => s
-            ..initial('green')
-            ..state('green', (s) => s..on<NextEvent>('yellow'))
-            ..state('yellow', (s) => s..on<NextEvent>('red'))
-            ..state('red', (s) => s..on<NextEvent>('green'))),
+          ..state(
+            'traffic',
+            (s) => s
+              ..initial('green')
+              ..state('green', (s) => s..on<NextEvent>('yellow'))
+              ..state('yellow', (s) => s..on<NextEvent>('red'))
+              ..state('red', (s) => s..on<NextEvent>('green')),
+          ),
         id: 'app',
       );
 
@@ -115,16 +118,25 @@ void main() {
         (m) => m
           ..context(const AppContext())
           ..initial('player')
-          ..state('player', (s) => s
-            ..parallel()
-            ..state('audio', (s) => s
-              ..initial('playing')
-              ..state('playing', (s) {})
-              ..state('muted', (s) {}))
-            ..state('video', (s) => s
-              ..initial('visible')
-              ..state('visible', (s) {})
-              ..state('hidden', (s) {}))),
+          ..state(
+            'player',
+            (s) => s
+              ..parallel()
+              ..state(
+                'audio',
+                (s) => s
+                  ..initial('playing')
+                  ..state('playing', (s) {})
+                  ..state('muted', (s) {}),
+              )
+              ..state(
+                'video',
+                (s) => s
+                  ..initial('visible')
+                  ..state('visible', (s) {})
+                  ..state('hidden', (s) {}),
+              ),
+          ),
         id: 'app',
       );
 
@@ -136,9 +148,12 @@ void main() {
         (m) => m
           ..context(const AppContext())
           ..initial('idle')
-          ..state('idle', (s) => s
-            ..on<NextEvent>('active')
-            ..on<SubmitEvent>('submitted'))
+          ..state(
+            'idle',
+            (s) => s
+              ..on<NextEvent>('active')
+              ..on<SubmitEvent>('submitted'),
+          )
           ..state('active', (s) {})
           ..state('submitted', (s) {}),
         id: 'app',
@@ -158,9 +173,10 @@ void main() {
         (m) => m
           ..context(const AppContext())
           ..initial('active')
-          ..state('active', (s) => s
-            ..on<NextEvent>('next',
-                guard: (ctx, _) => ctx.value > 0))
+          ..state(
+            'active',
+            (s) => s..on<NextEvent>('next', guard: (ctx, _) => ctx.value > 0),
+          )
           ..state('next', (s) {}),
         id: 'app',
       );
@@ -177,10 +193,14 @@ void main() {
         (m) => m
           ..context(const AppContext())
           ..initial('active')
-          ..state('active', (s) => s
-            ..on<NextEvent>('active', actions: [
-              (ctx, _) => ctx.copyWith(value: ctx.value + 1),
-            ])),
+          ..state(
+            'active',
+            (s) => s
+              ..on<NextEvent>(
+                'active',
+                actions: [(ctx, _) => ctx.copyWith(value: ctx.value + 1)],
+              ),
+          ),
         id: 'app',
       );
 
@@ -196,10 +216,10 @@ void main() {
           ..context(const AppContext())
           ..initial('idle')
           ..state('idle', (s) => s..on<NextEvent>('active'))
-          ..state('active', (s) => s
-            ..entry([
-              (ctx, _) => ctx.copyWith(value: 100),
-            ])),
+          ..state(
+            'active',
+            (s) => s..entry([(ctx, _) => ctx.copyWith(value: 100)]),
+          ),
         id: 'app',
       );
 
@@ -214,11 +234,12 @@ void main() {
         (m) => m
           ..context(const AppContext())
           ..initial('idle')
-          ..state('idle', (s) => s
-            ..on<NextEvent>('active')
-            ..exit([
-              (ctx, _) => ctx.copyWith(value: 50),
-            ]))
+          ..state(
+            'idle',
+            (s) => s
+              ..on<NextEvent>('active')
+              ..exit([(ctx, _) => ctx.copyWith(value: 50)]),
+          )
           ..state('active', (s) {}),
         id: 'app',
       );
@@ -234,11 +255,18 @@ void main() {
         (m) => m
           ..context(const AppContext(value: 5))
           ..initial('check')
-          ..state('check', (s) => s
-            ..onMultiple<SubmitEvent>([
-              (target: 'high', guard: (ctx, _) => ctx.value > 10, actions: null),
-              (target: 'low', guard: null, actions: null), // Default fallback
-            ]))
+          ..state(
+            'check',
+            (s) => s
+              ..onMultiple<SubmitEvent>([
+                (
+                  target: 'high',
+                  guard: (ctx, _) => ctx.value > 10,
+                  actions: null,
+                ),
+                (target: 'low', guard: null, actions: null), // Default fallback
+              ]),
+          )
           ..state('high', (s) {})
           ..state('low', (s) {}),
         id: 'app',
@@ -255,10 +283,14 @@ void main() {
         (m) => m
           ..context(const AppContext())
           ..initial('active')
-          ..state('active', (s) => s
-            ..on<NextEvent>(null, actions: [
-              (ctx, _) => ctx.copyWith(value: ctx.value + 1),
-            ])),
+          ..state(
+            'active',
+            (s) => s
+              ..on<NextEvent>(
+                null,
+                actions: [(ctx, _) => ctx.copyWith(value: ctx.value + 1)],
+              ),
+          ),
         id: 'app',
       );
 
@@ -276,25 +308,32 @@ void main() {
         (m) => m
           ..context(const AppContext())
           ..initial('active')
-          ..state('active', (s) => s
-            ..entry([
-              (ctx, _) {
-                log.add('entry');
-                return ctx;
-              },
-            ])
-            ..exit([
-              (ctx, _) {
-                log.add('exit');
-                return ctx;
-              },
-            ])
-            ..on<NextEvent>(null, internal: true, actions: [
-              (ctx, _) {
-                log.add('action');
-                return ctx.copyWith(value: ctx.value + 1);
-              },
-            ])),
+          ..state(
+            'active',
+            (s) => s
+              ..entry([
+                (ctx, _) {
+                  log.add('entry');
+                  return ctx;
+                },
+              ])
+              ..exit([
+                (ctx, _) {
+                  log.add('exit');
+                  return ctx;
+                },
+              ])
+              ..on<NextEvent>(
+                null,
+                internal: true,
+                actions: [
+                  (ctx, _) {
+                    log.add('action');
+                    return ctx.copyWith(value: ctx.value + 1);
+                  },
+                ],
+              ),
+          ),
         id: 'app',
       );
 

@@ -144,12 +144,13 @@ class StateBuilder<TContext, TEvent extends XEvent> {
   /// ```
   void onMultiple<E extends TEvent>(
     List<
-            ({
-              String? target,
-              GuardCallback<TContext, TEvent>? guard,
-              List<ActionCallback<TContext, TEvent>>? actions
-            })>
-        transitions,
+      ({
+        String? target,
+        GuardCallback<TContext, TEvent>? guard,
+        List<ActionCallback<TContext, TEvent>>? actions,
+      })
+    >
+    transitions,
   ) {
     for (final t in transitions) {
       final transition = Transition<TContext, TEvent>(

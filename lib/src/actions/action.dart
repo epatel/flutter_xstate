@@ -50,9 +50,9 @@ class ActionResult<TContext, TEvent extends XEvent> {
 
   /// Create a result with just context update.
   const ActionResult.context(this.context)
-      : raisedEvents = const [],
-        logMessages = const [],
-        sendToActions = const [];
+    : raisedEvents = const [],
+      logMessages = const [],
+      sendToActions = const [];
 
   /// Merge this result with another, combining side effects.
   ActionResult<TContext, TEvent> merge(ActionResult<TContext, TEvent> other) {

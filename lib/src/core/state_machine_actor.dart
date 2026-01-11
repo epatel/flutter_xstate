@@ -70,8 +70,8 @@ class StateMachineActor<TContext, TEvent extends XEvent> extends ChangeNotifier
     StateSnapshot<TContext>? initialSnapshot,
     ActorSystem? actorSystem,
     this.actorId,
-  })  : _snapshot = initialSnapshot ?? machine.initialState,
-        _actorSystem = actorSystem;
+  }) : _snapshot = initialSnapshot ?? machine.initialState,
+       _actorSystem = actorSystem;
 
   /// The actor system this actor belongs to.
   ActorSystem? get actorSystem => _actorSystem;
@@ -215,19 +215,25 @@ class StateMachineActor<TContext, TEvent extends XEvent> extends ChangeNotifier
       final invocation = _ActiveInvocation(id: id);
       _activeInvocations[id] = invocation;
 
-      future.then((data) {
-        if (!_stopped && _activeInvocations.containsKey(id)) {
-          _sendInvokeEvent(DoneInvokeEvent<dynamic>(invokeId: id, data: data));
-        }
-      }).catchError((Object error, StackTrace stackTrace) {
-        if (!_stopped && _activeInvocations.containsKey(id)) {
-          _sendInvokeEvent(ErrorInvokeEvent(
-            invokeId: id,
-            error: error,
-            stackTrace: stackTrace,
-          ));
-        }
-      });
+      future
+          .then((data) {
+            if (!_stopped && _activeInvocations.containsKey(id)) {
+              _sendInvokeEvent(
+                DoneInvokeEvent<dynamic>(invokeId: id, data: data),
+              );
+            }
+          })
+          .catchError((Object error, StackTrace stackTrace) {
+            if (!_stopped && _activeInvocations.containsKey(id)) {
+              _sendInvokeEvent(
+                ErrorInvokeEvent(
+                  invokeId: id,
+                  error: error,
+                  stackTrace: stackTrace,
+                ),
+              );
+            }
+          });
     } else if (result is StreamInvokeResult<TContext, TEvent, dynamic>) {
       final streamResult = result;
       final id = streamResult.id;
@@ -235,16 +241,20 @@ class StateMachineActor<TContext, TEvent extends XEvent> extends ChangeNotifier
       final subscription = stream.listen(
         (data) {
           if (!_stopped && _activeInvocations.containsKey(id)) {
-            _sendInvokeEvent(DoneInvokeEvent<dynamic>(invokeId: id, data: data));
+            _sendInvokeEvent(
+              DoneInvokeEvent<dynamic>(invokeId: id, data: data),
+            );
           }
         },
         onError: (Object error, StackTrace stackTrace) {
           if (!_stopped && _activeInvocations.containsKey(id)) {
-            _sendInvokeEvent(ErrorInvokeEvent(
-              invokeId: id,
-              error: error,
-              stackTrace: stackTrace,
-            ));
+            _sendInvokeEvent(
+              ErrorInvokeEvent(
+                invokeId: id,
+                error: error,
+                stackTrace: stackTrace,
+              ),
+            );
           }
         },
         onDone: () {
@@ -255,7 +265,8 @@ class StateMachineActor<TContext, TEvent extends XEvent> extends ChangeNotifier
         id: id,
         subscription: subscription,
       );
-    } else if (result is MachineInvokeResult<TContext, TEvent, dynamic, XEvent>) {
+    } else if (result
+        is MachineInvokeResult<TContext, TEvent, dynamic, XEvent>) {
       final machineResult = result;
       final id = machineResult.id;
       final childMachine = machineResult.machine;
@@ -265,18 +276,17 @@ class StateMachineActor<TContext, TEvent extends XEvent> extends ChangeNotifier
         machine: childMachine,
         parentId: actorId,
       );
-      _activeInvocations[id] = _ActiveInvocation(
-        id: id,
-        machineRef: ref,
-      );
+      _activeInvocations[id] = _ActiveInvocation(id: id, machineRef: ref);
 
       // Listen for child machine completion
       ref.actor.addListener(() {
         if (ref.actor.done && !_stopped) {
-          _sendInvokeEvent(DoneInvokeEvent<dynamic>(
-            invokeId: id,
-            data: ref.actor.snapshot.output,
-          ));
+          _sendInvokeEvent(
+            DoneInvokeEvent<dynamic>(
+              invokeId: id,
+              data: ref.actor.snapshot.output,
+            ),
+          );
         }
       });
     } else if (result is CallbackInvokeResult<TContext, TEvent>) {
@@ -292,13 +302,10 @@ class StateMachineActor<TContext, TEvent extends XEvent> extends ChangeNotifier
           storedHandler = handler;
         },
       );
-      _activeInvocations[id] = _ActiveInvocation(
-        id: id,
-        cleanup: cleanup,
-      );
+      _activeInvocations[id] = _ActiveInvocation(id: id, cleanup: cleanup);
       if (storedHandler != null) {
-        _activeInvocations[id]!.receiveHandler =
-            (e) => storedHandler!(e as TEvent);
+        _activeInvocations[id]!.receiveHandler = (e) =>
+            storedHandler!(e as TEvent);
       }
     }
   }

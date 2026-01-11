@@ -45,9 +45,7 @@ class AssignAction<TContext, TEvent extends XEvent>
 ///   raise(ValidateEvent()),
 /// ])
 /// ```
-Action<TContext, TEvent> raise<TContext, TEvent extends XEvent>(
-  TEvent event,
-) {
+Action<TContext, TEvent> raise<TContext, TEvent extends XEvent>(TEvent event) {
   return RaiseAction<TContext, TEvent>(event);
 }
 
@@ -77,10 +75,7 @@ class RaiseAction<TContext, TEvent extends XEvent>
 
   @override
   ActionResult<TContext, TEvent> execute(TContext context, TEvent event) {
-    return ActionResult(
-      context: context,
-      raisedEvents: [_event],
-    );
+    return ActionResult(context: context, raisedEvents: [_event]);
   }
 }
 
@@ -97,10 +92,7 @@ class RaiseFromAction<TContext, TEvent extends XEvent>
   @override
   ActionResult<TContext, TEvent> execute(TContext context, TEvent event) {
     final raisedEvent = _eventFactory(context, event);
-    return ActionResult(
-      context: context,
-      raisedEvents: [raisedEvent],
-    );
+    return ActionResult(context: context, raisedEvents: [raisedEvent]);
   }
 }
 
@@ -145,10 +137,7 @@ class LogAction<TContext, TEvent extends XEvent>
   @override
   ActionResult<TContext, TEvent> execute(TContext context, TEvent event) {
     final message = _messageFactory(context, event);
-    return ActionResult(
-      context: context,
-      logMessages: [message],
-    );
+    return ActionResult(context: context, logMessages: [message]);
   }
 }
 

@@ -6,19 +6,12 @@ class AuthContext {
   final bool isAuthenticated;
   final String? userId;
 
-  const AuthContext({
-    this.isAuthenticated = false,
-    this.userId,
-  });
+  const AuthContext({this.isAuthenticated = false, this.userId});
 
-  AuthContext copyWith({
-    bool? isAuthenticated,
-    String? userId,
-  }) =>
-      AuthContext(
-        isAuthenticated: isAuthenticated ?? this.isAuthenticated,
-        userId: userId ?? this.userId,
-      );
+  AuthContext copyWith({bool? isAuthenticated, String? userId}) => AuthContext(
+    isAuthenticated: isAuthenticated ?? this.isAuthenticated,
+    userId: userId ?? this.userId,
+  );
 }
 
 // Test events
@@ -51,20 +44,28 @@ void main() {
         ..initial('unauthenticated')
         ..state(
           'unauthenticated',
-          (s) => s..on<LoginEvent>('authenticated', actions: [
-            (ctx, _) => ctx.copyWith(isAuthenticated: true),
-          ]),
+          (s) => s
+            ..on<LoginEvent>(
+              'authenticated',
+              actions: [(ctx, _) => ctx.copyWith(isAuthenticated: true)],
+            ),
         )
         ..state(
           'authenticated',
           (s) => s
-            ..on<LogoutEvent>('unauthenticated', actions: [
-              (ctx, _) => ctx.copyWith(isAuthenticated: false, userId: null),
-            ])
-            ..on<UpdateUserEvent>('authenticated', actions: [
-              (ctx, event) =>
-                  ctx.copyWith(userId: (event as UpdateUserEvent).userId),
-            ]),
+            ..on<LogoutEvent>(
+              'unauthenticated',
+              actions: [
+                (ctx, _) => ctx.copyWith(isAuthenticated: false, userId: null),
+              ],
+            )
+            ..on<UpdateUserEvent>(
+              'authenticated',
+              actions: [
+                (ctx, event) =>
+                    ctx.copyWith(userId: (event as UpdateUserEvent).userId),
+              ],
+            ),
         ),
       id: 'auth',
     );
@@ -166,11 +167,11 @@ void main() {
       final actor = authMachine.createActor();
       actor.start();
 
-      final listenable = StateMachineValueRefreshListenable<AuthContext,
-          AuthEvent, bool>(
-        actor,
-        selector: (ctx) => ctx.isAuthenticated,
-      );
+      final listenable =
+          StateMachineValueRefreshListenable<AuthContext, AuthEvent, bool>(
+            actor,
+            selector: (ctx) => ctx.isAuthenticated,
+          );
       int notifyCount = 0;
       listenable.addListener(() => notifyCount++);
 
@@ -195,12 +196,12 @@ void main() {
       actor.start();
       actor.send(LoginEvent());
 
-      final listenable = StateMachineValueRefreshListenable<AuthContext,
-          AuthEvent, String?>(
-        actor,
-        selector: (ctx) => ctx.userId,
-        equals: (prev, curr) => prev == curr,
-      );
+      final listenable =
+          StateMachineValueRefreshListenable<AuthContext, AuthEvent, String?>(
+            actor,
+            selector: (ctx) => ctx.userId,
+            equals: (prev, curr) => prev == curr,
+          );
       int notifyCount = 0;
       listenable.addListener(() => notifyCount++);
 

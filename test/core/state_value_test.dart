@@ -42,53 +42,35 @@ void main() {
 
   group('CompoundStateValue', () {
     test('matches parent id', () {
-      const value = CompoundStateValue(
-        'traffic',
-        AtomicStateValue('green'),
-      );
+      const value = CompoundStateValue('traffic', AtomicStateValue('green'));
       expect(value.matches('traffic'), isTrue);
     });
 
     test('matches child id directly', () {
-      const value = CompoundStateValue(
-        'traffic',
-        AtomicStateValue('green'),
-      );
+      const value = CompoundStateValue('traffic', AtomicStateValue('green'));
       expect(value.matches('green'), isTrue);
     });
 
     test('matches with dot notation', () {
-      const value = CompoundStateValue(
-        'traffic',
-        AtomicStateValue('green'),
-      );
+      const value = CompoundStateValue('traffic', AtomicStateValue('green'));
       expect(value.matches('traffic.green'), isTrue);
     });
 
     test('does not match non-existent state', () {
-      const value = CompoundStateValue(
-        'traffic',
-        AtomicStateValue('green'),
-      );
+      const value = CompoundStateValue('traffic', AtomicStateValue('green'));
       expect(value.matches('red'), isFalse);
       expect(value.matches('traffic.red'), isFalse);
     });
 
     test('activeStates includes parent and prefixed child', () {
-      const value = CompoundStateValue(
-        'traffic',
-        AtomicStateValue('green'),
-      );
+      const value = CompoundStateValue('traffic', AtomicStateValue('green'));
       expect(value.activeStates, equals(['traffic', 'traffic.green']));
     });
 
     test('nested compound states work correctly', () {
       const value = CompoundStateValue(
         'app',
-        CompoundStateValue(
-          'dashboard',
-          AtomicStateValue('overview'),
-        ),
+        CompoundStateValue('dashboard', AtomicStateValue('overview')),
       );
 
       expect(value.matches('app'), isTrue);
@@ -156,15 +138,9 @@ void main() {
     });
 
     test('equality works correctly', () {
-      const value1 = ParallelStateValue('p', {
-        'a': AtomicStateValue('x'),
-      });
-      const value2 = ParallelStateValue('p', {
-        'a': AtomicStateValue('x'),
-      });
-      const value3 = ParallelStateValue('p', {
-        'a': AtomicStateValue('y'),
-      });
+      const value1 = ParallelStateValue('p', {'a': AtomicStateValue('x')});
+      const value2 = ParallelStateValue('p', {'a': AtomicStateValue('x')});
+      const value3 = ParallelStateValue('p', {'a': AtomicStateValue('y')});
 
       expect(value1, equals(value2));
       expect(value1, isNot(equals(value3)));

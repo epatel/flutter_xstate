@@ -107,7 +107,7 @@ class ActorSystem extends ChangeNotifier {
   /// Used internally by invoke to track async operations.
   @internal
   CallbackActorRef<TData, TEvent>
-      registerCallback<TData, TEvent extends XEvent>({
+  registerCallback<TData, TEvent extends XEvent>({
     required String id,
     String? parentId,
     void Function(TEvent event)? onReceive,

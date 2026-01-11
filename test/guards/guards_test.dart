@@ -27,9 +27,7 @@ class TestActionEvent extends TestEvent {
 void main() {
   group('guard', () {
     test('evaluates condition', () {
-      final g = guard<TestContext, TestEvent>(
-        (ctx, _) => ctx.count > 5,
-      );
+      final g = guard<TestContext, TestEvent>((ctx, _) => ctx.count > 5);
 
       expect(
         g.evaluate(const TestContext(count: 10), TestActionEvent()),
@@ -46,17 +44,17 @@ void main() {
         (ctx, event) => event.type == 'TEST',
       );
 
-      expect(
-        g.evaluate(const TestContext(), TestActionEvent()),
-        isTrue,
-      );
+      expect(g.evaluate(const TestContext(), TestActionEvent()), isTrue);
     });
 
     test('toCallback returns function', () {
       final g = guard<TestContext, TestEvent>((ctx, _) => ctx.isValid);
 
       final callback = g.toCallback();
-      expect(callback(const TestContext(isValid: true), TestActionEvent()), isTrue);
+      expect(
+        callback(const TestContext(isValid: true), TestActionEvent()),
+        isTrue,
+      );
     });
   });
 
@@ -76,7 +74,10 @@ void main() {
       const g = AlwaysGuard<TestContext, TestEvent>();
 
       expect(g.evaluate(const TestContext(), TestActionEvent()), isTrue);
-      expect(g.evaluate(const TestContext(count: 100), TestActionEvent()), isTrue);
+      expect(
+        g.evaluate(const TestContext(count: 100), TestActionEvent()),
+        isTrue,
+      );
     });
 
     test('has correct description', () {
@@ -90,7 +91,10 @@ void main() {
       const g = NeverGuard<TestContext, TestEvent>();
 
       expect(g.evaluate(const TestContext(), TestActionEvent()), isFalse);
-      expect(g.evaluate(const TestContext(isValid: true), TestActionEvent()), isFalse);
+      expect(
+        g.evaluate(const TestContext(isValid: true), TestActionEvent()),
+        isFalse,
+      );
     });
 
     test('has correct description', () {
@@ -107,15 +111,24 @@ void main() {
       ]);
 
       expect(
-        g.evaluate(const TestContext(count: 5, isValid: true), TestActionEvent()),
+        g.evaluate(
+          const TestContext(count: 5, isValid: true),
+          TestActionEvent(),
+        ),
         isTrue,
       );
       expect(
-        g.evaluate(const TestContext(count: 5, isValid: false), TestActionEvent()),
+        g.evaluate(
+          const TestContext(count: 5, isValid: false),
+          TestActionEvent(),
+        ),
         isFalse,
       );
       expect(
-        g.evaluate(const TestContext(count: 0, isValid: true), TestActionEvent()),
+        g.evaluate(
+          const TestContext(count: 0, isValid: true),
+          TestActionEvent(),
+        ),
         isFalse,
       );
     });
@@ -143,15 +156,24 @@ void main() {
       ]);
 
       expect(
-        g.evaluate(const TestContext(count: 5, isValid: true), TestActionEvent()),
+        g.evaluate(
+          const TestContext(count: 5, isValid: true),
+          TestActionEvent(),
+        ),
         isTrue,
       );
       expect(
-        g.evaluate(const TestContext(count: 20, isValid: false), TestActionEvent()),
+        g.evaluate(
+          const TestContext(count: 20, isValid: false),
+          TestActionEvent(),
+        ),
         isTrue,
       );
       expect(
-        g.evaluate(const TestContext(count: 5, isValid: false), TestActionEvent()),
+        g.evaluate(
+          const TestContext(count: 5, isValid: false),
+          TestActionEvent(),
+        ),
         isFalse,
       );
     });
@@ -173,9 +195,7 @@ void main() {
 
   group('not', () {
     test('negates guard result', () {
-      final g = not<TestContext, TestEvent>(
-        guard((ctx, _) => ctx.count > 0),
-      );
+      final g = not<TestContext, TestEvent>(guard((ctx, _) => ctx.count > 0));
 
       expect(
         g.evaluate(const TestContext(count: 0), TestActionEvent()),
@@ -204,21 +224,33 @@ void main() {
 
       // One true
       expect(
-        g.evaluate(const TestContext(count: 10, isValid: false), TestActionEvent()),
+        g.evaluate(
+          const TestContext(count: 10, isValid: false),
+          TestActionEvent(),
+        ),
         isTrue,
       );
       expect(
-        g.evaluate(const TestContext(count: 0, isValid: true), TestActionEvent()),
+        g.evaluate(
+          const TestContext(count: 0, isValid: true),
+          TestActionEvent(),
+        ),
         isTrue,
       );
       // Both true
       expect(
-        g.evaluate(const TestContext(count: 10, isValid: true), TestActionEvent()),
+        g.evaluate(
+          const TestContext(count: 10, isValid: true),
+          TestActionEvent(),
+        ),
         isFalse,
       );
       // Neither true
       expect(
-        g.evaluate(const TestContext(count: 0, isValid: false), TestActionEvent()),
+        g.evaluate(
+          const TestContext(count: 0, isValid: false),
+          TestActionEvent(),
+        ),
         isFalse,
       );
     });
@@ -226,10 +258,7 @@ void main() {
 
   group('equalsValue', () {
     test('checks equality', () {
-      final g = equalsValue<TestContext, TestEvent, int>(
-        (ctx) => ctx.count,
-        5,
-      );
+      final g = equalsValue<TestContext, TestEvent, int>((ctx) => ctx.count, 5);
 
       expect(
         g.evaluate(const TestContext(count: 5), TestActionEvent()),
@@ -260,10 +289,7 @@ void main() {
 
   group('isGreaterThan', () {
     test('checks if value is greater', () {
-      final g = isGreaterThan<TestContext, TestEvent>(
-        (ctx) => ctx.count,
-        5,
-      );
+      final g = isGreaterThan<TestContext, TestEvent>((ctx) => ctx.count, 5);
 
       expect(
         g.evaluate(const TestContext(count: 10), TestActionEvent()),
@@ -282,10 +308,7 @@ void main() {
 
   group('isLessThan', () {
     test('checks if value is less', () {
-      final g = isLessThan<TestContext, TestEvent>(
-        (ctx) => ctx.count,
-        10,
-      );
+      final g = isLessThan<TestContext, TestEvent>((ctx) => ctx.count, 10);
 
       expect(
         g.evaluate(const TestContext(count: 5), TestActionEvent()),
@@ -304,11 +327,7 @@ void main() {
 
   group('inRange', () {
     test('checks if value is within range', () {
-      final g = inRange<TestContext, TestEvent>(
-        (ctx) => ctx.count,
-        0,
-        10,
-      );
+      final g = inRange<TestContext, TestEvent>((ctx) => ctx.count, 0, 10);
 
       expect(
         g.evaluate(const TestContext(count: 5), TestActionEvent()),
@@ -335,9 +354,7 @@ void main() {
 
   group('isNullValue', () {
     test('checks if value is null', () {
-      final g = isNullValue<TestContext, TestEvent>(
-        (ctx) => ctx.name,
-      );
+      final g = isNullValue<TestContext, TestEvent>((ctx) => ctx.name);
 
       expect(
         g.evaluate(const TestContext(name: null), TestActionEvent()),
@@ -352,9 +369,7 @@ void main() {
 
   group('isNotNullValue', () {
     test('checks if value is not null', () {
-      final g = isNotNullValue<TestContext, TestEvent>(
-        (ctx) => ctx.name,
-      );
+      final g = isNotNullValue<TestContext, TestEvent>((ctx) => ctx.name);
 
       expect(
         g.evaluate(const TestContext(name: 'Alice'), TestActionEvent()),
@@ -369,9 +384,7 @@ void main() {
 
   group('isEmptyCollection', () {
     test('checks if collection is empty', () {
-      final g = isEmptyCollection<TestContext, TestEvent>(
-        (ctx) => ctx.items,
-      );
+      final g = isEmptyCollection<TestContext, TestEvent>((ctx) => ctx.items);
 
       expect(
         g.evaluate(const TestContext(items: []), TestActionEvent()),
@@ -405,26 +418,32 @@ void main() {
     test('nested combinators work correctly', () {
       // (count > 0 AND isValid) OR (count > 100)
       final g = or<TestContext, TestEvent>([
-        and([
-          guard((ctx, _) => ctx.count > 0),
-          guard((ctx, _) => ctx.isValid),
-        ]),
+        and([guard((ctx, _) => ctx.count > 0), guard((ctx, _) => ctx.isValid)]),
         guard((ctx, _) => ctx.count > 100),
       ]);
 
       // count > 0 AND isValid
       expect(
-        g.evaluate(const TestContext(count: 5, isValid: true), TestActionEvent()),
+        g.evaluate(
+          const TestContext(count: 5, isValid: true),
+          TestActionEvent(),
+        ),
         isTrue,
       );
       // count > 100 (even without isValid)
       expect(
-        g.evaluate(const TestContext(count: 150, isValid: false), TestActionEvent()),
+        g.evaluate(
+          const TestContext(count: 150, isValid: false),
+          TestActionEvent(),
+        ),
         isTrue,
       );
       // Neither condition
       expect(
-        g.evaluate(const TestContext(count: 5, isValid: false), TestActionEvent()),
+        g.evaluate(
+          const TestContext(count: 5, isValid: false),
+          TestActionEvent(),
+        ),
         isFalse,
       );
     });

@@ -8,15 +8,10 @@ class CheckoutContext {
   final int step;
   final double total;
 
-  const CheckoutContext({
-    this.step = 1,
-    this.total = 0.0,
-  });
+  const CheckoutContext({this.step = 1, this.total = 0.0});
 
-  CheckoutContext copyWith({int? step, double? total}) => CheckoutContext(
-        step: step ?? this.step,
-        total: total ?? this.total,
-      );
+  CheckoutContext copyWith({int? step, double? total}) =>
+      CheckoutContext(step: step ?? this.step, total: total ?? this.total);
 }
 
 // Test events
@@ -46,11 +41,14 @@ void main() {
           'cart',
           (s) => s
             ..on<NextStepEvent>('shipping')
-            ..on<AddItemEvent>('cart', actions: [
-              (ctx, event) => ctx.copyWith(
-                    total: ctx.total + (event as AddItemEvent).price,
-                  ),
-            ]),
+            ..on<AddItemEvent>(
+              'cart',
+              actions: [
+                (ctx, event) => ctx.copyWith(
+                  total: ctx.total + (event as AddItemEvent).price,
+                ),
+              ],
+            ),
         )
         ..state('shipping', (s) => s..on<NextStepEvent>('payment'))
         ..state('payment', (s) => s..on<NextStepEvent>('complete'))
@@ -69,19 +67,17 @@ void main() {
             path: '/',
             builder: (context, state) =>
                 RouteScopedMachine<CheckoutContext, CheckoutEvent>(
-              machine: checkoutMachine,
-              builder: (context, actor) {
-                capturedActor = actor;
-                return Text('Step: ${actor.snapshot.context.step}');
-              },
-            ),
+                  machine: checkoutMachine,
+                  builder: (context, actor) {
+                    capturedActor = actor;
+                    return Text('Step: ${actor.snapshot.context.step}');
+                  },
+                ),
           ),
         ],
       );
 
-      await tester.pumpWidget(
-        MaterialApp.router(routerConfig: router),
-      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
       await tester.pumpAndSettle();
 
       expect(capturedActor, isNotNull);
@@ -101,20 +97,18 @@ void main() {
             path: '/',
             builder: (context, state) =>
                 RouteScopedMachine<CheckoutContext, CheckoutEvent>(
-              machine: checkoutMachine,
-              onCreated: (actor) {
-                onCreatedCalled = true;
-                wasStartedWhenCreated = actor.started;
-              },
-              builder: (context, actor) => const SizedBox(),
-            ),
+                  machine: checkoutMachine,
+                  onCreated: (actor) {
+                    onCreatedCalled = true;
+                    wasStartedWhenCreated = actor.started;
+                  },
+                  builder: (context, actor) => const SizedBox(),
+                ),
           ),
         ],
       );
 
-      await tester.pumpWidget(
-        MaterialApp.router(routerConfig: router),
-      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
       await tester.pumpAndSettle();
 
       expect(onCreatedCalled, isTrue);
@@ -132,20 +126,18 @@ void main() {
             path: '/',
             builder: (context, state) =>
                 RouteScopedMachine<CheckoutContext, CheckoutEvent>(
-              machine: checkoutMachine,
-              autoStart: false,
-              builder: (context, actor) {
-                capturedActor = actor;
-                return const SizedBox();
-              },
-            ),
+                  machine: checkoutMachine,
+                  autoStart: false,
+                  builder: (context, actor) {
+                    capturedActor = actor;
+                    return const SizedBox();
+                  },
+                ),
           ),
         ],
       );
 
-      await tester.pumpWidget(
-        MaterialApp.router(routerConfig: router),
-      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
       await tester.pumpAndSettle();
 
       expect(capturedActor!.started, isFalse);
@@ -170,25 +162,23 @@ void main() {
             path: '/checkout',
             builder: (context, state) =>
                 RouteScopedMachine<CheckoutContext, CheckoutEvent>(
-              machine: checkoutMachine,
-              onDisposed: (actor) {
-                onDisposedCalled = true;
-              },
-              builder: (context, actor) {
-                capturedActor = actor;
-                return ElevatedButton(
-                  onPressed: () => GoRouter.of(context).go('/'),
-                  child: const Text('Go Back'),
-                );
-              },
-            ),
+                  machine: checkoutMachine,
+                  onDisposed: (actor) {
+                    onDisposedCalled = true;
+                  },
+                  builder: (context, actor) {
+                    capturedActor = actor;
+                    return ElevatedButton(
+                      onPressed: () => GoRouter.of(context).go('/'),
+                      child: const Text('Go Back'),
+                    );
+                  },
+                ),
           ),
         ],
       );
 
-      await tester.pumpWidget(
-        MaterialApp.router(routerConfig: router),
-      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
       await tester.pumpAndSettle();
 
       // Navigate to checkout
@@ -223,20 +213,18 @@ void main() {
             path: '/',
             builder: (context, state) =>
                 RouteScopedMachine<CheckoutContext, CheckoutEvent>(
-              machine: checkoutMachine,
-              initialSnapshot: initialSnapshot,
-              builder: (context, actor) {
-                capturedActor = actor;
-                return Text('Total: ${actor.snapshot.context.total}');
-              },
-            ),
+                  machine: checkoutMachine,
+                  initialSnapshot: initialSnapshot,
+                  builder: (context, actor) {
+                    capturedActor = actor;
+                    return Text('Total: ${actor.snapshot.context.total}');
+                  },
+                ),
           ),
         ],
       );
 
-      await tester.pumpWidget(
-        MaterialApp.router(routerConfig: router),
-      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
       await tester.pumpAndSettle();
 
       expect(capturedActor!.matches('shipping'), isTrue);
@@ -264,9 +252,7 @@ void main() {
         ],
       );
 
-      await tester.pumpWidget(
-        MaterialApp.router(routerConfig: router),
-      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
       await tester.pumpAndSettle();
 
       expect(capturedActor, isNotNull);
@@ -296,9 +282,7 @@ void main() {
         ],
       );
 
-      await tester.pumpWidget(
-        MaterialApp.router(routerConfig: router),
-      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
       await tester.pumpAndSettle();
 
       expect(capturedState, isNotNull);

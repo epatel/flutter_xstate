@@ -13,10 +13,7 @@ class AuthContext {
     this.isEmailVerified = false,
   });
 
-  AuthContext copyWith({
-    bool? isAuthenticated,
-    bool? isEmailVerified,
-  }) =>
+  AuthContext copyWith({bool? isAuthenticated, bool? isEmailVerified}) =>
       AuthContext(
         isAuthenticated: isAuthenticated ?? this.isAuthenticated,
         isEmailVerified: isEmailVerified ?? this.isEmailVerified,
@@ -50,8 +47,8 @@ class MockGoRouterState extends Fake implements GoRouterState {
   final Uri uri;
 
   MockGoRouterState(String location)
-      : matchedLocation = location,
-        uri = Uri.parse(location);
+    : matchedLocation = location,
+      uri = Uri.parse(location);
 
   @override
   Object? get extra => null;
@@ -87,15 +84,19 @@ void main() {
         ..initial('unauthenticated')
         ..state(
           'unauthenticated',
-          (s) => s..on<LoginEvent>('unverified', actions: [
-            (ctx, _) => ctx.copyWith(isAuthenticated: true),
-          ]),
+          (s) => s
+            ..on<LoginEvent>(
+              'unverified',
+              actions: [(ctx, _) => ctx.copyWith(isAuthenticated: true)],
+            ),
         )
         ..state(
           'unverified',
-          (s) => s..on<VerifyEmailEvent>('authenticated', actions: [
-            (ctx, _) => ctx.copyWith(isEmailVerified: true),
-          ]),
+          (s) => s
+            ..on<VerifyEmailEvent>(
+              'authenticated',
+              actions: [(ctx, _) => ctx.copyWith(isEmailVerified: true)],
+            ),
         )
         ..state('authenticated', (s) => s..on<LogoutEvent>('unauthenticated')),
       id: 'auth',

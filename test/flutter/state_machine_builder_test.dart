@@ -31,15 +31,16 @@ void main() {
       (m) => m
         ..context(const CounterContext())
         ..initial('active')
-        ..state('active', (s) => s
-          ..on<IncrementEvent>('active', actions: [
-            (ctx, _) => ctx.copyWith(count: ctx.count + 1),
-          ])
-          ..on<ResetEvent>('idle')
+        ..state(
+          'active',
+          (s) => s
+            ..on<IncrementEvent>(
+              'active',
+              actions: [(ctx, _) => ctx.copyWith(count: ctx.count + 1)],
+            )
+            ..on<ResetEvent>('idle'),
         )
-        ..state('idle', (s) => s
-          ..on<IncrementEvent>('active')
-        ),
+        ..state('idle', (s) => s..on<IncrementEvent>('active')),
       id: 'counter',
     );
   });
@@ -148,8 +149,7 @@ void main() {
               stateId: 'active',
               matchBuilder: (context, state, send) =>
                   const Text('Active State'),
-              orElse: (context, state, send) =>
-                  const Text('Other State'),
+              orElse: (context, state, send) => const Text('Other State'),
             ),
           ),
         ),
@@ -159,7 +159,9 @@ void main() {
       expect(find.text('Other State'), findsNothing);
     });
 
-    testWidgets('shows orElse widget when state does not match', (tester) async {
+    testWidgets('shows orElse widget when state does not match', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: StateMachineProvider<CounterContext, CounterEvent>(
@@ -178,8 +180,7 @@ void main() {
                   stateId: 'active',
                   matchBuilder: (context, state, send) =>
                       const Text('Active State'),
-                  orElse: (context, state, send) =>
-                      const Text('Idle State'),
+                  orElse: (context, state, send) => const Text('Idle State'),
                 ),
               ],
             ),
@@ -235,10 +236,8 @@ void main() {
                 ),
                 StateMachineContextBuilder<CounterContext, CounterEvent>(
                   condition: (ctx) => ctx.count >= 3,
-                  builder: (context, state, send) =>
-                      const Text('High Count'),
-                  orElse: (context, state, send) =>
-                      const Text('Low Count'),
+                  builder: (context, state, send) => const Text('High Count'),
+                  orElse: (context, state, send) => const Text('Low Count'),
                 ),
               ],
             ),

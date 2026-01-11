@@ -182,7 +182,11 @@ class TransitionResolver<TContext, TEvent extends XEvent> {
     if (defaultTarget != null) {
       final defaultConfig = parent.states[defaultTarget];
       if (defaultConfig != null) {
-        return _buildFullStateValue(defaultTarget, defaultConfig, parent: parent);
+        return _buildFullStateValue(
+          defaultTarget,
+          defaultConfig,
+          parent: parent,
+        );
       }
     }
 
@@ -290,10 +294,7 @@ class TransitionResolver<TContext, TEvent extends XEvent> {
             'Initial state "${config.initial}" not found in "${config.id}"',
           );
         }
-        return CompoundStateValue(
-          config.id,
-          _resolveInitialValue(childConfig),
-        );
+        return CompoundStateValue(config.id, _resolveInitialValue(childConfig));
 
       case StateType.parallel:
         final regions = <String, StateValue>{};

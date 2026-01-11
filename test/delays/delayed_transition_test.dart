@@ -9,9 +9,9 @@ class TimerContext {
   const TimerContext({this.ticks = 0, this.expired = false});
 
   TimerContext copyWith({int? ticks, bool? expired}) => TimerContext(
-        ticks: ticks ?? this.ticks,
-        expired: expired ?? this.expired,
-      );
+    ticks: ticks ?? this.ticks,
+    expired: expired ?? this.expired,
+  );
 }
 
 // Test events
@@ -57,9 +57,7 @@ void main() {
       final config = DelayedTransitionConfig<TimerContext, TimerEvent>(
         delay: const Duration(seconds: 5),
         target: 'expired',
-        actions: [
-          (ctx, _) => ctx.copyWith(expired: true),
-        ],
+        actions: [(ctx, _) => ctx.copyWith(expired: true)],
       );
 
       expect(config.actions.length, equals(1));
@@ -95,11 +93,13 @@ void main() {
         (event) => events.add(event),
       );
 
-      manager.addDelayed(DelayedTransitionConfig(
-        delay: const Duration(milliseconds: 50),
-        target: 'expired',
-        id: 'timeout',
-      ));
+      manager.addDelayed(
+        DelayedTransitionConfig(
+          delay: const Duration(milliseconds: 50),
+          target: 'expired',
+          id: 'timeout',
+        ),
+      );
 
       manager.startTransitions(const TimerContext());
 
@@ -110,7 +110,10 @@ void main() {
 
       expect(events.length, equals(1));
       expect(events.first, isA<DelayedTransitionEvent>());
-      expect((events.first as DelayedTransitionEvent).target, equals('expired'));
+      expect(
+        (events.first as DelayedTransitionEvent).target,
+        equals('expired'),
+      );
 
       manager.dispose();
     });
@@ -121,11 +124,13 @@ void main() {
         (event) => events.add(event),
       );
 
-      manager.addPeriodic(PeriodicTransitionConfig(
-        interval: const Duration(milliseconds: 30),
-        eventFactory: (_) => TickEvent(),
-        id: 'ticker',
-      ));
+      manager.addPeriodic(
+        PeriodicTransitionConfig(
+          interval: const Duration(milliseconds: 30),
+          eventFactory: (_) => TickEvent(),
+          id: 'ticker',
+        ),
+      );
 
       manager.startTransitions(const TimerContext());
 
@@ -143,11 +148,13 @@ void main() {
         (event) => events.add(event),
       );
 
-      manager.addPeriodic(PeriodicTransitionConfig(
-        interval: const Duration(seconds: 10),
-        eventFactory: (_) => TickEvent(),
-        fireImmediately: true,
-      ));
+      manager.addPeriodic(
+        PeriodicTransitionConfig(
+          interval: const Duration(seconds: 10),
+          eventFactory: (_) => TickEvent(),
+          fireImmediately: true,
+        ),
+      );
 
       manager.startTransitions(const TimerContext());
 
@@ -162,11 +169,13 @@ void main() {
         (event) => events.add(event),
       );
 
-      manager.addDelayed(DelayedTransitionConfig(
-        delay: const Duration(milliseconds: 10),
-        target: 'expired',
-        guard: (ctx) => ctx.ticks > 5,
-      ));
+      manager.addDelayed(
+        DelayedTransitionConfig(
+          delay: const Duration(milliseconds: 10),
+          target: 'expired',
+          guard: (ctx) => ctx.ticks > 5,
+        ),
+      );
 
       // Guard fails, timer should not start
       manager.startTransitions(const TimerContext(ticks: 3));
@@ -184,11 +193,13 @@ void main() {
         (event) => events.add(event),
       );
 
-      manager.addDelayed(DelayedTransitionConfig(
-        delay: const Duration(milliseconds: 100),
-        target: 'expired',
-        id: 'timeout',
-      ));
+      manager.addDelayed(
+        DelayedTransitionConfig(
+          delay: const Duration(milliseconds: 100),
+          target: 'expired',
+          id: 'timeout',
+        ),
+      );
 
       manager.startTransitions(const TimerContext());
       expect(manager.isTimerActive('timeout'), isTrue);
@@ -208,16 +219,20 @@ void main() {
         (_) {},
       );
 
-      manager.addDelayed(DelayedTransitionConfig(
-        delay: const Duration(seconds: 1),
-        target: 'state1',
-        id: 'timer1',
-      ));
-      manager.addDelayed(DelayedTransitionConfig(
-        delay: const Duration(seconds: 2),
-        target: 'state2',
-        id: 'timer2',
-      ));
+      manager.addDelayed(
+        DelayedTransitionConfig(
+          delay: const Duration(seconds: 1),
+          target: 'state1',
+          id: 'timer1',
+        ),
+      );
+      manager.addDelayed(
+        DelayedTransitionConfig(
+          delay: const Duration(seconds: 2),
+          target: 'state2',
+          id: 'timer2',
+        ),
+      );
 
       manager.startTransitions(const TimerContext());
       expect(manager.activeTimerIds, equals({'timer1', 'timer2'}));

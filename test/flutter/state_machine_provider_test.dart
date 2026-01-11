@@ -31,13 +31,17 @@ void main() {
       (m) => m
         ..context(const CounterContext())
         ..initial('active')
-        ..state('active', (s) => s
-          ..on<IncrementEvent>('active', actions: [
-            (ctx, _) => ctx.copyWith(count: ctx.count + 1),
-          ])
-          ..on<DecrementEvent>('active', actions: [
-            (ctx, _) => ctx.copyWith(count: ctx.count - 1),
-          ])
+        ..state(
+          'active',
+          (s) => s
+            ..on<IncrementEvent>(
+              'active',
+              actions: [(ctx, _) => ctx.copyWith(count: ctx.count + 1)],
+            )
+            ..on<DecrementEvent>(
+              'active',
+              actions: [(ctx, _) => ctx.copyWith(count: ctx.count - 1)],
+            ),
         ),
       id: 'counter',
     );
@@ -53,8 +57,7 @@ void main() {
             machine: counterMachine,
             child: Builder(
               builder: (context) {
-                capturedActor =
-                    context.actor<CounterContext, CounterEvent>();
+                capturedActor = context.actor<CounterContext, CounterEvent>();
                 return const SizedBox();
               },
             ),
@@ -75,8 +78,7 @@ void main() {
             machine: counterMachine,
             child: Builder(
               builder: (context) {
-                capturedActor =
-                    context.actor<CounterContext, CounterEvent>();
+                capturedActor = context.actor<CounterContext, CounterEvent>();
                 return const SizedBox();
               },
             ),
@@ -97,8 +99,7 @@ void main() {
             autoStart: false,
             child: Builder(
               builder: (context) {
-                capturedActor =
-                    context.actor<CounterContext, CounterEvent>();
+                capturedActor = context.actor<CounterContext, CounterEvent>();
                 return const SizedBox();
               },
             ),
@@ -139,8 +140,7 @@ void main() {
             machine: counterMachine,
             child: Builder(
               builder: (context) {
-                capturedActor =
-                    context.actor<CounterContext, CounterEvent>();
+                capturedActor = context.actor<CounterContext, CounterEvent>();
                 return const SizedBox();
               },
             ),
@@ -171,8 +171,7 @@ void main() {
             initialSnapshot: initialSnapshot,
             child: Builder(
               builder: (context) {
-                capturedActor =
-                    context.actor<CounterContext, CounterEvent>();
+                capturedActor = context.actor<CounterContext, CounterEvent>();
                 return const SizedBox();
               },
             ),
@@ -198,8 +197,7 @@ void main() {
             actor: actor,
             child: Builder(
               builder: (context) {
-                capturedActor =
-                    context.actor<CounterContext, CounterEvent>();
+                capturedActor = context.actor<CounterContext, CounterEvent>();
                 return const SizedBox();
               },
             ),
@@ -224,7 +222,9 @@ void main() {
               builder: (context) {
                 return ElevatedButton(
                   onPressed: () {
-                    context.send<CounterContext, CounterEvent>(IncrementEvent());
+                    context.send<CounterContext, CounterEvent>(
+                      IncrementEvent(),
+                    );
                   },
                   child: const Text('Increment'),
                 );
@@ -255,7 +255,9 @@ void main() {
             machine: counterMachine,
             child: Builder(
               builder: (context) {
-                isActive = context.matches<CounterContext, CounterEvent>('active');
+                isActive = context.matches<CounterContext, CounterEvent>(
+                  'active',
+                );
                 return const SizedBox();
               },
             ),

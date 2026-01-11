@@ -70,10 +70,10 @@ class StateMachineProvider<TContext, TEvent extends XEvent>
       _StateMachineProviderState<TContext, TEvent>();
 
   /// Read the actor from the nearest ancestor [StateMachineProvider].
-  static StateMachineActor<TContext, TEvent> of<TContext, TEvent extends XEvent>(
-    BuildContext context, {
-    bool listen = false,
-  }) {
+  static StateMachineActor<TContext, TEvent> of<
+    TContext,
+    TEvent extends XEvent
+  >(BuildContext context, {bool listen = false}) {
     if (listen) {
       return context.watch<StateMachineActor<TContext, TEvent>>();
     }
@@ -180,10 +180,7 @@ class MultiStateMachineProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: providers,
-      child: child,
-    );
+    return MultiProvider(providers: providers, child: child);
   }
 }
 
@@ -200,7 +197,7 @@ extension StateMachineContext on BuildContext {
   ///
   /// Rebuilds when the actor's state changes.
   StateMachineActor<TContext, TEvent>
-      watchActor<TContext, TEvent extends XEvent>() {
+  watchActor<TContext, TEvent extends XEvent>() {
     return watch<StateMachineActor<TContext, TEvent>>();
   }
 

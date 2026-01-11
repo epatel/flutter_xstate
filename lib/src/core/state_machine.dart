@@ -136,11 +136,7 @@ class StateMachine<TContext, TEvent extends XEvent> {
 
   /// Create a new machine with different initial context.
   StateMachine<TContext, TEvent> withContext(TContext context) {
-    return StateMachine.internal(
-      id: id,
-      initialContext: context,
-      root: root,
-    );
+    return StateMachine.internal(id: id, initialContext: context, root: root);
   }
 
   /// Resolve the initial state value from the root config.
@@ -163,10 +159,7 @@ class StateMachine<TContext, TEvent extends XEvent> {
             'Initial state "${config.initial}" not found in "${config.id}"',
           );
         }
-        return CompoundStateValue(
-          config.id,
-          _resolveInitialValue(childConfig),
-        );
+        return CompoundStateValue(config.id, _resolveInitialValue(childConfig));
 
       case StateType.parallel:
         final regions = <String, StateValue>{};
@@ -292,7 +285,8 @@ class StateMachine<TContext, TEvent extends XEvent> {
     return switch (value) {
       AtomicStateValue(:final id) => id,
       CompoundStateValue(:final child) => _getInnermostStateId(child),
-      ParallelStateValue(:final id) => id, // Parallel states don't have a single leaf
+      ParallelStateValue(:final id) =>
+        id, // Parallel states don't have a single leaf
     };
   }
 

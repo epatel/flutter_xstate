@@ -45,10 +45,12 @@ void main() {
         (m) => m
           ..context(const TestContext())
           ..initial('parent')
-          ..state('parent', (s) => s
-            ..initial('child1')
-            ..state('child1', (s) => s..on<NextEvent>('child2'))
-            ..state('child2', (s) {})
+          ..state(
+            'parent',
+            (s) => s
+              ..initial('child1')
+              ..state('child1', (s) => s..on<NextEvent>('child2'))
+              ..state('child2', (s) {}),
           ),
         id: 'test',
       );
@@ -64,11 +66,13 @@ void main() {
         (m) => m
           ..context(const TestContext())
           ..initial('parent')
-          ..state('parent', (s) => s
-            ..initial('child1')
-            ..state('child1', (s) => s..on<NextEvent>('child2'))
-            ..state('child2', (s) => s..on<NextEvent>('child3'))
-            ..state('child3', (s) {})
+          ..state(
+            'parent',
+            (s) => s
+              ..initial('child1')
+              ..state('child1', (s) => s..on<NextEvent>('child2'))
+              ..state('child2', (s) => s..on<NextEvent>('child3'))
+              ..state('child3', (s) {}),
           ),
         id: 'test',
       );
@@ -89,15 +93,21 @@ void main() {
         (m) => m
           ..context(const TestContext())
           ..initial('level1')
-          ..state('level1', (s) => s
-            ..initial('level2')
-            ..state('level2', (s) => s
-              ..initial('level3')
-              ..state('level3', (s) => s
-                ..initial('level4')
-                ..state('level4', (s) {})
-              )
-            )
+          ..state(
+            'level1',
+            (s) => s
+              ..initial('level2')
+              ..state(
+                'level2',
+                (s) => s
+                  ..initial('level3')
+                  ..state(
+                    'level3',
+                    (s) => s
+                      ..initial('level4')
+                      ..state('level4', (s) {}),
+                  ),
+              ),
           ),
         id: 'test',
       );
@@ -117,12 +127,15 @@ void main() {
           ..context(const TestContext())
           ..initial('outside')
           ..state('outside', (s) => s..on<NextEvent>('parent'))
-          ..state('parent', (s) => s
-            ..entry([(ctx, _) => ctx.addLog('enter:parent')])
-            ..initial('child')
-            ..state('child', (s) => s
-              ..entry([(ctx, _) => ctx.addLog('enter:child')])
-            )
+          ..state(
+            'parent',
+            (s) => s
+              ..entry([(ctx, _) => ctx.addLog('enter:parent')])
+              ..initial('child')
+              ..state(
+                'child',
+                (s) => s..entry([(ctx, _) => ctx.addLog('enter:child')]),
+              ),
           ),
         id: 'test',
       );
@@ -138,13 +151,17 @@ void main() {
         (m) => m
           ..context(const TestContext())
           ..initial('parent')
-          ..state('parent', (s) => s
-            ..exit([(ctx, _) => ctx.addLog('exit:parent')])
-            ..initial('child')
-            ..state('child', (s) => s
-              ..exit([(ctx, _) => ctx.addLog('exit:child')])
-              ..on<NextEvent>('outside')
-            )
+          ..state(
+            'parent',
+            (s) => s
+              ..exit([(ctx, _) => ctx.addLog('exit:parent')])
+              ..initial('child')
+              ..state(
+                'child',
+                (s) => s
+                  ..exit([(ctx, _) => ctx.addLog('exit:child')])
+                  ..on<NextEvent>('outside'),
+              ),
           )
           ..state('outside', (s) {}),
         id: 'test',
@@ -161,19 +178,25 @@ void main() {
         (m) => m
           ..context(const TestContext())
           ..initial('parent')
-          ..state('parent', (s) => s
-            ..entry([(ctx, _) => ctx.addLog('enter:parent')])
-            ..exit([(ctx, _) => ctx.addLog('exit:parent')])
-            ..initial('child1')
-            ..state('child1', (s) => s
-              ..entry([(ctx, _) => ctx.addLog('enter:child1')])
-              ..exit([(ctx, _) => ctx.addLog('exit:child1')])
-              ..on<NextEvent>('child2')
-            )
-            ..state('child2', (s) => s
-              ..entry([(ctx, _) => ctx.addLog('enter:child2')])
-              ..exit([(ctx, _) => ctx.addLog('exit:child2')])
-            )
+          ..state(
+            'parent',
+            (s) => s
+              ..entry([(ctx, _) => ctx.addLog('enter:parent')])
+              ..exit([(ctx, _) => ctx.addLog('exit:parent')])
+              ..initial('child1')
+              ..state(
+                'child1',
+                (s) => s
+                  ..entry([(ctx, _) => ctx.addLog('enter:child1')])
+                  ..exit([(ctx, _) => ctx.addLog('exit:child1')])
+                  ..on<NextEvent>('child2'),
+              )
+              ..state(
+                'child2',
+                (s) => s
+                  ..entry([(ctx, _) => ctx.addLog('enter:child2')])
+                  ..exit([(ctx, _) => ctx.addLog('exit:child2')]),
+              ),
           ),
         id: 'test',
       );
@@ -193,20 +216,27 @@ void main() {
         (m) => m
           ..context(const TestContext())
           ..initial('a')
-          ..state('a', (s) => s
-            ..exit([(ctx, _) => ctx.addLog('exit:a')])
-            ..initial('a1')
-            ..state('a1', (s) => s
-              ..exit([(ctx, _) => ctx.addLog('exit:a1')])
-              ..on<NextEvent>('b')
-            )
+          ..state(
+            'a',
+            (s) => s
+              ..exit([(ctx, _) => ctx.addLog('exit:a')])
+              ..initial('a1')
+              ..state(
+                'a1',
+                (s) => s
+                  ..exit([(ctx, _) => ctx.addLog('exit:a1')])
+                  ..on<NextEvent>('b'),
+              ),
           )
-          ..state('b', (s) => s
-            ..entry([(ctx, _) => ctx.addLog('enter:b')])
-            ..initial('b1')
-            ..state('b1', (s) => s
-              ..entry([(ctx, _) => ctx.addLog('enter:b1')])
-            )
+          ..state(
+            'b',
+            (s) => s
+              ..entry([(ctx, _) => ctx.addLog('enter:b')])
+              ..initial('b1')
+              ..state(
+                'b1',
+                (s) => s..entry([(ctx, _) => ctx.addLog('enter:b1')]),
+              ),
           ),
         id: 'test',
       );
@@ -230,12 +260,16 @@ void main() {
         (m) => m
           ..context(const TestContext())
           ..initial('state')
-          ..state('state', (s) => s
-            ..entry([(ctx, _) => ctx.addLog('entry')])
-            ..exit([(ctx, _) => ctx.addLog('exit')])
-            ..on<NextEvent>(null, internal: true, actions: [
-              (ctx, _) => ctx.addLog('action'),
-            ])
+          ..state(
+            'state',
+            (s) => s
+              ..entry([(ctx, _) => ctx.addLog('entry')])
+              ..exit([(ctx, _) => ctx.addLog('exit')])
+              ..on<NextEvent>(
+                null,
+                internal: true,
+                actions: [(ctx, _) => ctx.addLog('action')],
+              ),
           ),
         id: 'test',
       );
@@ -255,14 +289,18 @@ void main() {
         (m) => m
           ..context(const TestContext())
           ..initial('app')
-          ..state('app', (s) => s
-            ..initial('dashboard')
-            ..state('dashboard', (s) => s
-              ..initial('overview')
-              ..state('overview', (s) {})
-              ..state('details', (s) {})
-            )
-            ..state('settings', (s) {})
+          ..state(
+            'app',
+            (s) => s
+              ..initial('dashboard')
+              ..state(
+                'dashboard',
+                (s) => s
+                  ..initial('overview')
+                  ..state('overview', (s) {})
+                  ..state('details', (s) {}),
+              )
+              ..state('settings', (s) {}),
           ),
         id: 'test',
       );
@@ -287,12 +325,15 @@ void main() {
         (m) => m
           ..context(const TestContext())
           ..initial('parent')
-          ..state('parent', (s) => s
-            ..on<BackEvent>('outside')
-            ..initial('child')
-            ..state('child', (s) => s
-              ..on<NextEvent>('child') // Only handles NextEvent
-            )
+          ..state(
+            'parent',
+            (s) => s
+              ..on<BackEvent>('outside')
+              ..initial('child')
+              ..state(
+                'child',
+                (s) => s..on<NextEvent>('child'), // Only handles NextEvent
+              ),
           )
           ..state('outside', (s) {}),
         id: 'test',
@@ -311,17 +352,23 @@ void main() {
         (m) => m
           ..context(const TestContext())
           ..initial('parent')
-          ..state('parent', (s) => s
-            ..on<NextEvent>('outside', actions: [
-              (ctx, _) => ctx.addLog('parent-handler'),
-            ])
-            ..initial('child')
-            ..state('child', (s) => s
-              ..on<NextEvent>('sibling', actions: [
-                (ctx, _) => ctx.addLog('child-handler'),
-              ])
-            )
-            ..state('sibling', (s) {})
+          ..state(
+            'parent',
+            (s) => s
+              ..on<NextEvent>(
+                'outside',
+                actions: [(ctx, _) => ctx.addLog('parent-handler')],
+              )
+              ..initial('child')
+              ..state(
+                'child',
+                (s) => s
+                  ..on<NextEvent>(
+                    'sibling',
+                    actions: [(ctx, _) => ctx.addLog('child-handler')],
+                  ),
+              )
+              ..state('sibling', (s) {}),
           )
           ..state('outside', (s) {}),
         id: 'test',

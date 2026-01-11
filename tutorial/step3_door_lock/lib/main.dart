@@ -21,10 +21,10 @@ class DoorContext {
   });
 
   DoorContext copyWith({int? failedAttempts}) => DoorContext(
-        failedAttempts: failedAttempts ?? this.failedAttempts,
-        maxAttempts: maxAttempts,
-        correctPin: correctPin,
-      );
+    failedAttempts: failedAttempts ?? this.failedAttempts,
+    maxAttempts: maxAttempts,
+    correctPin: correctPin,
+  );
 }
 
 // ============================================================================
@@ -67,7 +67,8 @@ bool isPinCorrect(DoorContext ctx, DoorEvent event) {
   return false;
 }
 
-bool isPinIncorrect(DoorContext ctx, DoorEvent event) => !isPinCorrect(ctx, event);
+bool isPinIncorrect(DoorContext ctx, DoorEvent event) =>
+    !isPinCorrect(ctx, event);
 
 bool isMaxAttemptsReached(DoorContext ctx, DoorEvent event) =>
     ctx.failedAttempts >= ctx.maxAttempts - 1;
@@ -87,9 +88,11 @@ final doorMachine = StateMachine.create<DoorContext, DoorEvent>(
       'locked',
       (s) => s
         // Correct PIN -> unlocked
-        ..on<UnlockEvent>('unlocked', guard: isPinCorrect, actions: [
-          (ctx, _) => ctx.copyWith(failedAttempts: 0),
-        ])
+        ..on<UnlockEvent>(
+          'unlocked',
+          guard: isPinCorrect,
+          actions: [(ctx, _) => ctx.copyWith(failedAttempts: 0)],
+        )
         // Wrong PIN + max attempts -> lockout
         ..on<UnlockEvent>(
           'lockout',
@@ -99,27 +102,31 @@ final doorMachine = StateMachine.create<DoorContext, DoorEvent>(
           ],
         )
         // Wrong PIN -> stay locked
-        ..on<UnlockEvent>('locked', guard: isPinIncorrect, actions: [
-          (ctx, _) => ctx.copyWith(failedAttempts: ctx.failedAttempts + 1),
-        ])
+        ..on<UnlockEvent>(
+          'locked',
+          guard: isPinIncorrect,
+          actions: [
+            (ctx, _) => ctx.copyWith(failedAttempts: ctx.failedAttempts + 1),
+          ],
+        )
         // Admin always works
-        ..on<AdminOverrideEvent>('unlocked', actions: [
-          (ctx, _) => ctx.copyWith(failedAttempts: 0),
-        ]),
+        ..on<AdminOverrideEvent>(
+          'unlocked',
+          actions: [(ctx, _) => ctx.copyWith(failedAttempts: 0)],
+        ),
     )
-    ..state(
-      'unlocked',
-      (s) => s..on<LockEvent>('locked'),
-    )
+    ..state('unlocked', (s) => s..on<LockEvent>('locked'))
     ..state(
       'lockout',
       (s) => s
-        ..on<AdminOverrideEvent>('locked', actions: [
-          (ctx, _) => ctx.copyWith(failedAttempts: 0),
-        ])
-        ..on<ResetEvent>('locked', actions: [
-          (ctx, _) => ctx.copyWith(failedAttempts: 0),
-        ]),
+        ..on<AdminOverrideEvent>(
+          'locked',
+          actions: [(ctx, _) => ctx.copyWith(failedAttempts: 0)],
+        )
+        ..on<ResetEvent>(
+          'locked',
+          actions: [(ctx, _) => ctx.copyWith(failedAttempts: 0)],
+        ),
     ),
   id: 'doorLock',
 );
@@ -213,14 +220,14 @@ class _DoorLockScreenState extends State<DoorLockScreen> {
                     isUnlocked
                         ? 'UNLOCKED'
                         : isLockout
-                            ? 'LOCKOUT'
-                            : 'LOCKED',
+                        ? 'LOCKOUT'
+                        : 'LOCKED',
                     style: TextStyle(
                       color: isUnlocked
                           ? Colors.green
                           : isLockout
-                              ? Colors.red
-                              : Colors.orange,
+                          ? Colors.red
+                          : Colors.orange,
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                     ),
@@ -342,14 +349,14 @@ class _DoorIcon extends StatelessWidget {
         color: isUnlocked
             ? Colors.green.withValues(alpha: 0.2)
             : isLockout
-                ? Colors.red.withValues(alpha: 0.2)
-                : Colors.orange.withValues(alpha: 0.2),
+            ? Colors.red.withValues(alpha: 0.2)
+            : Colors.orange.withValues(alpha: 0.2),
         border: Border.all(
           color: isUnlocked
               ? Colors.green
               : isLockout
-                  ? Colors.red
-                  : Colors.orange,
+              ? Colors.red
+              : Colors.orange,
           width: 3,
         ),
       ),
@@ -357,14 +364,14 @@ class _DoorIcon extends StatelessWidget {
         isUnlocked
             ? Icons.lock_open
             : isLockout
-                ? Icons.block
-                : Icons.lock,
+            ? Icons.block
+            : Icons.lock,
         size: 60,
         color: isUnlocked
             ? Colors.green
             : isLockout
-                ? Colors.red
-                : Colors.orange,
+            ? Colors.red
+            : Colors.orange,
       ),
     );
   }
@@ -458,11 +465,7 @@ class _KeypadButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final Color? color;
 
-  const _KeypadButton({
-    required this.label,
-    this.onPressed,
-    this.color,
-  });
+  const _KeypadButton({required this.label, this.onPressed, this.color});
 
   @override
   Widget build(BuildContext context) {

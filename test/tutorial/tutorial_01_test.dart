@@ -41,29 +41,29 @@ class TrafficLightContext {
 
 final trafficLightMachine =
     StateMachine.create<TrafficLightContext, TrafficLightEvent>(
-  (m) => m
-    ..context(const TrafficLightContext())
-    ..initial('green')
-    ..state(
-      'green',
-      (s) => s
-        ..on<TimerEvent>('yellow')
-        ..on<EmergencyEvent>('red'),
-    )
-    ..state(
-      'yellow',
-      (s) => s
-        ..on<TimerEvent>('red')
-        ..on<EmergencyEvent>('red'),
-    )
-    ..state(
-      'red',
-      (s) => s
-        ..on<TimerEvent>('green')
-        ..on<ResetEvent>('green'),
-    ),
-  id: 'trafficLight',
-);
+      (m) => m
+        ..context(const TrafficLightContext())
+        ..initial('green')
+        ..state(
+          'green',
+          (s) => s
+            ..on<TimerEvent>('yellow')
+            ..on<EmergencyEvent>('red'),
+        )
+        ..state(
+          'yellow',
+          (s) => s
+            ..on<TimerEvent>('red')
+            ..on<EmergencyEvent>('red'),
+        )
+        ..state(
+          'red',
+          (s) => s
+            ..on<TimerEvent>('green')
+            ..on<ResetEvent>('green'),
+        ),
+      id: 'trafficLight',
+    );
 
 // ============================================================================
 // Demo as Test

@@ -5,13 +5,11 @@ class TestContext {
   final int count;
   const TestContext({this.count = 0});
 
-  TestContext copyWith({int? count}) =>
-      TestContext(count: count ?? this.count);
+  TestContext copyWith({int? count}) => TestContext(count: count ?? this.count);
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is TestContext && count == other.count;
+      identical(this, other) || other is TestContext && count == other.count;
 
   @override
   int get hashCode => count.hashCode;
@@ -108,9 +106,7 @@ void main() {
         output: 'result',
       );
 
-      final updated = original.copyWith(
-        value: const AtomicStateValue('new'),
-      );
+      final updated = original.copyWith(value: const AtomicStateValue('new'));
 
       expect(updated.matches('new'), isTrue);
       expect(updated.context.count, equals(5));

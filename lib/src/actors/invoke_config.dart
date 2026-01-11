@@ -42,10 +42,7 @@ class FutureInvokeResult<TContext, TEvent extends XEvent, TData>
   /// Unique ID for this invocation.
   final String id;
 
-  const FutureInvokeResult({
-    required this.future,
-    required this.id,
-  });
+  const FutureInvokeResult({required this.future, required this.id});
 }
 
 /// Result for a Stream-based invocation.
@@ -57,25 +54,24 @@ class StreamInvokeResult<TContext, TEvent extends XEvent, TData>
   /// Unique ID for this invocation.
   final String id;
 
-  const StreamInvokeResult({
-    required this.stream,
-    required this.id,
-  });
+  const StreamInvokeResult({required this.stream, required this.id});
 }
 
 /// Result for a Machine-based invocation.
-class MachineInvokeResult<TContext, TEvent extends XEvent, TChildContext,
-    TChildEvent extends XEvent> extends InvokeResult<TContext, TEvent> {
+class MachineInvokeResult<
+  TContext,
+  TEvent extends XEvent,
+  TChildContext,
+  TChildEvent extends XEvent
+>
+    extends InvokeResult<TContext, TEvent> {
   /// The machine to spawn.
   final StateMachine<TChildContext, TChildEvent> machine;
 
   /// Unique ID for this invocation.
   final String id;
 
-  const MachineInvokeResult({
-    required this.machine,
-    required this.id,
-  });
+  const MachineInvokeResult({required this.machine, required this.id});
 }
 
 /// Configuration for invoking a Future.
@@ -109,10 +105,7 @@ class InvokeFuture<TContext, TEvent extends XEvent, TData>
   /// Factory function that creates the Future.
   final Future<TData> Function(TContext context, TEvent event) src;
 
-  const InvokeFuture({
-    required super.id,
-    required this.src,
-  });
+  const InvokeFuture({required super.id, required this.src});
 
   @override
   InvokeResult<TContext, TEvent> invoke(TContext context, TEvent event) {
@@ -156,10 +149,7 @@ class InvokeStream<TContext, TEvent extends XEvent, TData>
   /// Factory function that creates the Stream.
   final Stream<TData> Function(TContext context, TEvent event) src;
 
-  const InvokeStream({
-    required super.id,
-    required this.src,
-  });
+  const InvokeStream({required super.id, required this.src});
 
   @override
   InvokeResult<TContext, TEvent> invoke(TContext context, TEvent event) {
@@ -191,18 +181,21 @@ class InvokeStream<TContext, TEvent extends XEvent, TData>
 ///   ])
 /// )
 /// ```
-class InvokeMachine<TContext, TEvent extends XEvent, TChildContext,
-    TChildEvent extends XEvent> extends InvokeConfig<TContext, TEvent> {
+class InvokeMachine<
+  TContext,
+  TEvent extends XEvent,
+  TChildContext,
+  TChildEvent extends XEvent
+>
+    extends InvokeConfig<TContext, TEvent> {
   /// Factory function that creates/configures the machine.
   final StateMachine<TChildContext, TChildEvent> Function(
     TContext context,
     TEvent event,
-  ) src;
+  )
+  src;
 
-  const InvokeMachine({
-    required super.id,
-    required this.src,
-  });
+  const InvokeMachine({required super.id, required this.src});
 
   @override
   InvokeResult<TContext, TEvent> invoke(TContext context, TEvent event) {
@@ -248,12 +241,11 @@ class InvokeCallback<TContext, TEvent extends XEvent>
   final void Function() Function(
     void Function(TEvent event) sendBack,
     void Function(void Function(TEvent event) handler) receive,
-  ) Function(TContext context, TEvent event) src;
+  )
+  Function(TContext context, TEvent event)
+  src;
 
-  const InvokeCallback({
-    required super.id,
-    required this.src,
-  });
+  const InvokeCallback({required super.id, required this.src});
 
   @override
   InvokeResult<TContext, TEvent> invoke(TContext context, TEvent event) {
@@ -272,15 +264,13 @@ class CallbackInvokeResult<TContext, TEvent extends XEvent>
   final void Function() Function(
     void Function(TEvent event) sendBack,
     void Function(void Function(TEvent event) handler) receive,
-  ) factory;
+  )
+  factory;
 
   /// Unique ID for this invocation.
   final String id;
 
-  const CallbackInvokeResult({
-    required this.factory,
-    required this.id,
-  });
+  const CallbackInvokeResult({required this.factory, required this.id});
 }
 
 /// Helper to create invoke configurations.
@@ -301,7 +291,7 @@ class InvokeFactory {
 
   /// Create a Future-based invoke.
   static InvokeFuture<TContext, TEvent, TData>
-      future<TContext, TEvent extends XEvent, TData>({
+  future<TContext, TEvent extends XEvent, TData>({
     required String id,
     required Future<TData> Function(TContext context, TEvent event) src,
   }) {
@@ -310,7 +300,7 @@ class InvokeFactory {
 
   /// Create a Stream-based invoke.
   static InvokeStream<TContext, TEvent, TData>
-      stream<TContext, TEvent extends XEvent, TData>({
+  stream<TContext, TEvent extends XEvent, TData>({
     required String id,
     required Stream<TData> Function(TContext context, TEvent event) src,
   }) {
@@ -319,15 +309,17 @@ class InvokeFactory {
 
   /// Create a Machine-based invoke.
   static InvokeMachine<TContext, TEvent, TChildContext, TChildEvent> machine<
-      TContext,
-      TEvent extends XEvent,
-      TChildContext,
-      TChildEvent extends XEvent>({
+    TContext,
+    TEvent extends XEvent,
+    TChildContext,
+    TChildEvent extends XEvent
+  >({
     required String id,
     required StateMachine<TChildContext, TChildEvent> Function(
       TContext context,
       TEvent event,
-    ) src,
+    )
+    src,
   }) {
     return InvokeMachine<TContext, TEvent, TChildContext, TChildEvent>(
       id: id,
@@ -337,13 +329,14 @@ class InvokeFactory {
 
   /// Create a callback-based invoke.
   static InvokeCallback<TContext, TEvent>
-      callback<TContext, TEvent extends XEvent>({
+  callback<TContext, TEvent extends XEvent>({
     required String id,
     required void Function() Function(
       void Function(TEvent event) sendBack,
       void Function(void Function(TEvent event) handler) receive,
-    ) Function(TContext context, TEvent event)
-        src,
+    )
+    Function(TContext context, TEvent event)
+    src,
   }) {
     return InvokeCallback<TContext, TEvent>(id: id, src: src);
   }

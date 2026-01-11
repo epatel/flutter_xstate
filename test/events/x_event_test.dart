@@ -69,10 +69,7 @@ void main() {
     });
 
     test('stores data', () {
-      const event = DoneInvokeEvent<int>(
-        invokeId: 'calculate',
-        data: 42,
-      );
+      const event = DoneInvokeEvent<int>(invokeId: 'calculate', data: 42);
       expect(event.data, equals(42));
     });
   });

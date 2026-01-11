@@ -138,18 +138,23 @@ void main() {
           ..context(const CounterContext())
           ..initial('idle')
           ..state('idle', (s) => s..on<IncrementEvent>('active'))
-          ..state('active', (s) => s
-            ..on<IncrementEvent>('active', actions: [
-              (ctx, _) => ctx.copyWith(count: ctx.count + 1),
-            ])
-            ..on<DecrementEvent>('active',
+          ..state(
+            'active',
+            (s) => s
+              ..on<IncrementEvent>(
+                'active',
+                actions: [(ctx, _) => ctx.copyWith(count: ctx.count + 1)],
+              )
+              ..on<DecrementEvent>(
+                'active',
                 guard: (ctx, _) => ctx.count > 0,
-                actions: [
-                  (ctx, _) => ctx.copyWith(count: ctx.count - 1),
-                ])
-            ..on<ResetEvent>('idle', actions: [
-              (ctx, _) => ctx.copyWith(count: 0),
-            ])),
+                actions: [(ctx, _) => ctx.copyWith(count: ctx.count - 1)],
+              )
+              ..on<ResetEvent>(
+                'idle',
+                actions: [(ctx, _) => ctx.copyWith(count: 0)],
+              ),
+          ),
         id: 'counter',
       );
     });
@@ -164,7 +169,10 @@ void main() {
     test('executes actions during transition', () {
       var state = machine.initialState;
       state = machine.transition(state, IncrementEvent()); // idle -> active
-      state = machine.transition(state, IncrementEvent()); // active -> active with count+1
+      state = machine.transition(
+        state,
+        IncrementEvent(),
+      ); // active -> active with count+1
 
       expect(state.context.count, equals(1));
     });
@@ -275,10 +283,10 @@ void main() {
           ..context(const CounterContext())
           ..initial('idle')
           ..state('idle', (s) => s..on<IncrementEvent>('active'))
-          ..state('active', (s) => s
-            ..entry([
-              (ctx, _) => ctx.copyWith(count: ctx.count + 10),
-            ])),
+          ..state(
+            'active',
+            (s) => s..entry([(ctx, _) => ctx.copyWith(count: ctx.count + 10)]),
+          ),
         id: 'counter',
       );
 
@@ -293,11 +301,12 @@ void main() {
         (m) => m
           ..context(const CounterContext())
           ..initial('idle')
-          ..state('idle', (s) => s
-            ..on<IncrementEvent>('active')
-            ..exit([
-              (ctx, _) => ctx.copyWith(count: ctx.count + 5),
-            ]))
+          ..state(
+            'idle',
+            (s) => s
+              ..on<IncrementEvent>('active')
+              ..exit([(ctx, _) => ctx.copyWith(count: ctx.count + 5)]),
+          )
           ..state('active', (s) {}),
         id: 'counter',
       );
@@ -315,26 +324,35 @@ void main() {
         (m) => m
           ..context(const CounterContext())
           ..initial('idle')
-          ..state('idle', (s) => s
-            ..on<IncrementEvent>('active', actions: [
-              (ctx, _) {
-                log.add('transition');
-                return ctx;
-              },
-            ])
-            ..exit([
-              (ctx, _) {
-                log.add('exit');
-                return ctx;
-              },
-            ]))
-          ..state('active', (s) => s
-            ..entry([
-              (ctx, _) {
-                log.add('entry');
-                return ctx;
-              },
-            ])),
+          ..state(
+            'idle',
+            (s) => s
+              ..on<IncrementEvent>(
+                'active',
+                actions: [
+                  (ctx, _) {
+                    log.add('transition');
+                    return ctx;
+                  },
+                ],
+              )
+              ..exit([
+                (ctx, _) {
+                  log.add('exit');
+                  return ctx;
+                },
+              ]),
+          )
+          ..state(
+            'active',
+            (s) => s
+              ..entry([
+                (ctx, _) {
+                  log.add('entry');
+                  return ctx;
+                },
+              ]),
+          ),
         id: 'counter',
       );
 

@@ -26,30 +26,26 @@ class TodoItem {
   });
 
   TodoItem copyWith({String? text, bool? completed}) => TodoItem(
-        id: id,
-        text: text ?? this.text,
-        completed: completed ?? this.completed,
-      );
+    id: id,
+    text: text ?? this.text,
+    completed: completed ?? this.completed,
+  );
 }
 
 class TodoContext {
   final List<TodoItem> items;
   final String? editingId;
 
-  const TodoContext({
-    this.items = const [],
-    this.editingId,
-  });
+  const TodoContext({this.items = const [], this.editingId});
 
   TodoContext copyWith({
     List<TodoItem>? items,
     String? editingId,
     bool clearEditing = false,
-  }) =>
-      TodoContext(
-        items: items ?? this.items,
-        editingId: clearEditing ? null : (editingId ?? this.editingId),
-      );
+  }) => TodoContext(
+    items: items ?? this.items,
+    editingId: clearEditing ? null : (editingId ?? this.editingId),
+  );
 
   int get totalCount => items.length;
   int get completedCount => items.where((i) => i.completed).length;
@@ -123,69 +119,88 @@ final todoMachine = StateMachine.create<TodoContext, TodoEvent>(
     ..state(
       'idle',
       (s) => s
-        ..on<AddTodoEvent>('idle', actions: [
-          (ctx, event) {
-            final e = event as AddTodoEvent;
-            final newItem = TodoItem(
-              id: DateTime.now().millisecondsSinceEpoch.toString(),
-              text: e.text,
-            );
-            return ctx.copyWith(items: [...ctx.items, newItem]);
-          },
-        ])
-        ..on<RemoveTodoEvent>('idle', actions: [
-          (ctx, event) {
-            final e = event as RemoveTodoEvent;
-            return ctx.copyWith(
-              items: ctx.items.where((i) => i.id != e.id).toList(),
-            );
-          },
-        ])
-        ..on<ToggleTodoEvent>('idle', actions: [
-          (ctx, event) {
-            final e = event as ToggleTodoEvent;
-            return ctx.copyWith(
-              items: ctx.items.map((i) {
-                if (i.id == e.id) {
-                  return i.copyWith(completed: !i.completed);
-                }
-                return i;
-              }).toList(),
-            );
-          },
-        ])
-        ..on<StartEditEvent>('editing', actions: [
-          (ctx, event) {
-            final e = event as StartEditEvent;
-            return ctx.copyWith(editingId: e.id);
-          },
-        ])
-        ..on<ClearCompletedEvent>('idle', actions: [
-          (ctx, _) => ctx.copyWith(
-                items: ctx.items.where((i) => !i.completed).toList(),
-              ),
-        ]),
+        ..on<AddTodoEvent>(
+          'idle',
+          actions: [
+            (ctx, event) {
+              final e = event as AddTodoEvent;
+              final newItem = TodoItem(
+                id: DateTime.now().millisecondsSinceEpoch.toString(),
+                text: e.text,
+              );
+              return ctx.copyWith(items: [...ctx.items, newItem]);
+            },
+          ],
+        )
+        ..on<RemoveTodoEvent>(
+          'idle',
+          actions: [
+            (ctx, event) {
+              final e = event as RemoveTodoEvent;
+              return ctx.copyWith(
+                items: ctx.items.where((i) => i.id != e.id).toList(),
+              );
+            },
+          ],
+        )
+        ..on<ToggleTodoEvent>(
+          'idle',
+          actions: [
+            (ctx, event) {
+              final e = event as ToggleTodoEvent;
+              return ctx.copyWith(
+                items: ctx.items.map((i) {
+                  if (i.id == e.id) {
+                    return i.copyWith(completed: !i.completed);
+                  }
+                  return i;
+                }).toList(),
+              );
+            },
+          ],
+        )
+        ..on<StartEditEvent>(
+          'editing',
+          actions: [
+            (ctx, event) {
+              final e = event as StartEditEvent;
+              return ctx.copyWith(editingId: e.id);
+            },
+          ],
+        )
+        ..on<ClearCompletedEvent>(
+          'idle',
+          actions: [
+            (ctx, _) => ctx.copyWith(
+              items: ctx.items.where((i) => !i.completed).toList(),
+            ),
+          ],
+        ),
     )
     ..state(
       'editing',
       (s) => s
-        ..on<SaveEditEvent>('idle', actions: [
-          (ctx, event) {
-            final e = event as SaveEditEvent;
-            return ctx.copyWith(
-              items: ctx.items.map((i) {
-                if (i.id == ctx.editingId) {
-                  return i.copyWith(text: e.text);
-                }
-                return i;
-              }).toList(),
-              clearEditing: true,
-            );
-          },
-        ])
-        ..on<CancelEditEvent>('idle', actions: [
-          (ctx, _) => ctx.copyWith(clearEditing: true),
-        ]),
+        ..on<SaveEditEvent>(
+          'idle',
+          actions: [
+            (ctx, event) {
+              final e = event as SaveEditEvent;
+              return ctx.copyWith(
+                items: ctx.items.map((i) {
+                  if (i.id == ctx.editingId) {
+                    return i.copyWith(text: e.text);
+                  }
+                  return i;
+                }).toList(),
+                clearEditing: true,
+              );
+            },
+          ],
+        )
+        ..on<CancelEditEvent>(
+          'idle',
+          actions: [(ctx, _) => ctx.copyWith(clearEditing: true)],
+        ),
     ),
   id: 'todo',
 );
@@ -228,9 +243,7 @@ class TodoScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Step 5: Todo App'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        actions: const [
-          _TodoStats(),
-        ],
+        actions: const [_TodoStats()],
       ),
       body: Stack(
         children: [
@@ -370,10 +383,7 @@ class _TodoList extends StatelessWidget {
                 const SizedBox(height: 16),
                 Text(
                   'No todos yet!',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 18,
-                  ),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 18),
                 ),
               ],
             ),
@@ -392,7 +402,9 @@ class _TodoList extends StatelessWidget {
               title: Text(
                 item.text,
                 style: TextStyle(
-                  decoration: item.completed ? TextDecoration.lineThrough : null,
+                  decoration: item.completed
+                      ? TextDecoration.lineThrough
+                      : null,
                   color: item.completed ? Colors.grey : null,
                 ),
               ),
@@ -436,9 +448,7 @@ class _TodoFooter extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            border: Border(
-              top: BorderSide(color: Colors.grey[300]!),
-            ),
+            border: Border(top: BorderSide(color: Colors.grey[300]!)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

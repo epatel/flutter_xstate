@@ -36,8 +36,7 @@ class StatePath<TContext, TEvent extends XEvent> {
       configs.isNotEmpty ? configs.first : null;
 
   /// Get the state ID at the given depth.
-  String? idAt(int depth) =>
-      depth < configs.length ? configs[depth].id : null;
+  String? idAt(int depth) => depth < configs.length ? configs[depth].id : null;
 
   /// Get the config at the given depth.
   StateConfig<TContext, TEvent>? configAt(int depth) =>
@@ -112,8 +111,7 @@ class StateHierarchy {
     StatePath<TContext, TEvent> target,
   ) {
     int lcaDepth = 0;
-    final minDepth =
-        source.depth < target.depth ? source.depth : target.depth;
+    final minDepth = source.depth < target.depth ? source.depth : target.depth;
 
     for (int i = 0; i < minDepth; i++) {
       if (source.idAt(i) == target.idAt(i)) {
@@ -130,7 +128,7 @@ class StateHierarchy {
   ///
   /// Returns configs in exit order (innermost to outermost).
   static List<StateConfig<TContext, TEvent>>
-      getExitStates<TContext, TEvent extends XEvent>(
+  getExitStates<TContext, TEvent extends XEvent>(
     StatePath<TContext, TEvent> source,
     StatePath<TContext, TEvent> target, {
     bool internal = false,
@@ -155,7 +153,7 @@ class StateHierarchy {
   ///
   /// Returns configs in entry order (outermost to innermost).
   static List<StateConfig<TContext, TEvent>>
-      getEntryStates<TContext, TEvent extends XEvent>(
+  getEntryStates<TContext, TEvent extends XEvent>(
     StatePath<TContext, TEvent> source,
     StatePath<TContext, TEvent> target, {
     bool internal = false,

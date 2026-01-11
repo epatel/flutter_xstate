@@ -34,15 +34,19 @@ void main() {
         ..initial('unauthenticated')
         ..state(
           'unauthenticated',
-          (s) => s..on<LoginEvent>('authenticated', actions: [
-            (ctx, _) => ctx.copyWith(isAuthenticated: true),
-          ]),
+          (s) => s
+            ..on<LoginEvent>(
+              'authenticated',
+              actions: [(ctx, _) => ctx.copyWith(isAuthenticated: true)],
+            ),
         )
         ..state(
           'authenticated',
-          (s) => s..on<LogoutEvent>('unauthenticated', actions: [
-            (ctx, _) => ctx.copyWith(isAuthenticated: false),
-          ]),
+          (s) => s
+            ..on<LogoutEvent>(
+              'unauthenticated',
+              actions: [(ctx, _) => ctx.copyWith(isAuthenticated: false)],
+            ),
         ),
       id: 'auth',
     );
@@ -176,9 +180,8 @@ void main() {
                   const Text('Home'),
             ),
           ],
-          builder: (context, router) => MaterialApp.router(
-            routerConfig: router,
-          ),
+          builder: (context, router) =>
+              MaterialApp.router(routerConfig: router),
         ),
       );
       await tester.pumpAndSettle();
@@ -203,9 +206,8 @@ void main() {
               },
             ),
           ],
-          builder: (context, router) => MaterialApp.router(
-            routerConfig: router,
-          ),
+          builder: (context, router) =>
+              MaterialApp.router(routerConfig: router),
         ),
       );
       await tester.pumpAndSettle();
@@ -222,10 +224,7 @@ void main() {
 
       final router = createStateMachineRouter(
         actor: actor,
-        stateRoutes: {
-          'unauthenticated': '/login',
-          'authenticated': '/home',
-        },
+        stateRoutes: {'unauthenticated': '/login', 'authenticated': '/home'},
         builders: {
           '/login': (context, state) => const Text('Login'),
           '/home': (context, state) => const Text('Home'),
@@ -258,9 +257,7 @@ void main() {
         ],
       );
 
-      await tester.pumpWidget(
-        MaterialApp.router(routerConfig: router),
-      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
       await tester.pumpAndSettle();
 
       expect(capturedRouter, isNotNull);

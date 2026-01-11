@@ -22,10 +22,10 @@ class DoorContext {
   });
 
   DoorContext copyWith({int? failedAttempts}) => DoorContext(
-        failedAttempts: failedAttempts ?? this.failedAttempts,
-        maxAttempts: maxAttempts,
-        correctPin: correctPin,
-      );
+    failedAttempts: failedAttempts ?? this.failedAttempts,
+    maxAttempts: maxAttempts,
+    correctPin: correctPin,
+  );
 }
 
 sealed class DoorEvent extends XEvent {}
@@ -64,7 +64,8 @@ bool isPinCorrect(DoorContext ctx, DoorEvent event) {
   return false;
 }
 
-bool isPinIncorrect(DoorContext ctx, DoorEvent event) => !isPinCorrect(ctx, event);
+bool isPinIncorrect(DoorContext ctx, DoorEvent event) =>
+    !isPinCorrect(ctx, event);
 
 bool isMaxAttemptsReached(DoorContext ctx, DoorEvent event) =>
     ctx.failedAttempts >= ctx.maxAttempts - 1;
@@ -91,12 +92,16 @@ final doorMachine = StateMachine.create<DoorContext, DoorEvent>(
           },
         ])
         // Correct PIN -> unlocked
-        ..on<UnlockEvent>('unlocked', guard: isPinCorrect, actions: [
-          (ctx, _) {
-            print('  [Door] PIN correct! Unlocking...');
-            return ctx.copyWith(failedAttempts: 0);
-          },
-        ])
+        ..on<UnlockEvent>(
+          'unlocked',
+          guard: isPinCorrect,
+          actions: [
+            (ctx, _) {
+              print('  [Door] PIN correct! Unlocking...');
+              return ctx.copyWith(failedAttempts: 0);
+            },
+          ],
+        )
         // Wrong PIN + max attempts -> lockout
         ..on<UnlockEvent>(
           'lockout',
@@ -109,20 +114,27 @@ final doorMachine = StateMachine.create<DoorContext, DoorEvent>(
           ],
         )
         // Wrong PIN -> stay locked
-        ..on<UnlockEvent>('locked', guard: isPinIncorrect, actions: [
-          (ctx, _) {
-            final attempts = ctx.failedAttempts + 1;
-            print('  [Door] Wrong PIN! Attempt $attempts/${ctx.maxAttempts}');
-            return ctx.copyWith(failedAttempts: attempts);
-          },
-        ])
+        ..on<UnlockEvent>(
+          'locked',
+          guard: isPinIncorrect,
+          actions: [
+            (ctx, _) {
+              final attempts = ctx.failedAttempts + 1;
+              print('  [Door] Wrong PIN! Attempt $attempts/${ctx.maxAttempts}');
+              return ctx.copyWith(failedAttempts: attempts);
+            },
+          ],
+        )
         // Admin always works
-        ..on<AdminOverrideEvent>('unlocked', actions: [
-          (ctx, _) {
-            print('  [Door] Admin override!');
-            return ctx.copyWith(failedAttempts: 0);
-          },
-        ]),
+        ..on<AdminOverrideEvent>(
+          'unlocked',
+          actions: [
+            (ctx, _) {
+              print('  [Door] Admin override!');
+              return ctx.copyWith(failedAttempts: 0);
+            },
+          ],
+        ),
     )
     ..state(
       'unlocked',
@@ -144,18 +156,24 @@ final doorMachine = StateMachine.create<DoorContext, DoorEvent>(
             return ctx;
           },
         ])
-        ..on<AdminOverrideEvent>('locked', actions: [
-          (ctx, _) {
-            print('  [Door] Admin reset lockout');
-            return ctx.copyWith(failedAttempts: 0);
-          },
-        ])
-        ..on<ResetEvent>('locked', actions: [
-          (ctx, _) {
-            print('  [Door] System reset');
-            return ctx.copyWith(failedAttempts: 0);
-          },
-        ]),
+        ..on<AdminOverrideEvent>(
+          'locked',
+          actions: [
+            (ctx, _) {
+              print('  [Door] Admin reset lockout');
+              return ctx.copyWith(failedAttempts: 0);
+            },
+          ],
+        )
+        ..on<ResetEvent>(
+          'locked',
+          actions: [
+            (ctx, _) {
+              print('  [Door] System reset');
+              return ctx.copyWith(failedAttempts: 0);
+            },
+          ],
+        ),
     ),
   id: 'doorLock',
 );

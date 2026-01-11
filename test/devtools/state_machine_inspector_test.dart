@@ -39,12 +39,14 @@ void main() {
         ..state(
           'active',
           (s) => s
-            ..on<IncrementEvent>('active', actions: [
-              (ctx, _) => ctx.copyWith(count: ctx.count + 1),
-            ])
-            ..on<DecrementEvent>('active', actions: [
-              (ctx, _) => ctx.copyWith(count: ctx.count - 1),
-            ])
+            ..on<IncrementEvent>(
+              'active',
+              actions: [(ctx, _) => ctx.copyWith(count: ctx.count + 1)],
+            )
+            ..on<DecrementEvent>(
+              'active',
+              actions: [(ctx, _) => ctx.copyWith(count: ctx.count - 1)],
+            )
             ..on<ResetEvent>('idle'),
         )
         ..state('idle', (s) => s..on<IncrementEvent>('active')),

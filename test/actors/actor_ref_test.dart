@@ -30,11 +30,14 @@ void main() {
         (m) => m
           ..context(const TestContext())
           ..initial('active')
-          ..state('active', (s) => s
-            ..on<IncrementEvent>('active', actions: [
-              (ctx, _) => ctx.copyWith(count: ctx.count + 1),
-            ])
-            ..on<StopEvent>('done')
+          ..state(
+            'active',
+            (s) => s
+              ..on<IncrementEvent>(
+                'active',
+                actions: [(ctx, _) => ctx.copyWith(count: ctx.count + 1)],
+              )
+              ..on<StopEvent>('done'),
           )
           ..state('done', (s) => s..final_()),
         id: 'test',
@@ -170,13 +173,16 @@ void main() {
 
   group('ActorStatus', () {
     test('has all expected values', () {
-      expect(ActorStatus.values, containsAll([
-        ActorStatus.starting,
-        ActorStatus.running,
-        ActorStatus.stopping,
-        ActorStatus.stopped,
-        ActorStatus.error,
-      ]));
+      expect(
+        ActorStatus.values,
+        containsAll([
+          ActorStatus.starting,
+          ActorStatus.running,
+          ActorStatus.stopping,
+          ActorStatus.stopped,
+          ActorStatus.error,
+        ]),
+      );
     });
   });
 }

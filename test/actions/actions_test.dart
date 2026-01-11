@@ -49,19 +49,14 @@ void main() {
     });
 
     test('can access event data', () {
-      final action = assign<TestContext, TestEvent>(
-        (ctx, event) {
-          if (event is MessageEvent) {
-            return ctx.copyWith(message: event.text);
-          }
-          return ctx;
-        },
-      );
+      final action = assign<TestContext, TestEvent>((ctx, event) {
+        if (event is MessageEvent) {
+          return ctx.copyWith(message: event.text);
+        }
+        return ctx;
+      });
 
-      final result = action.execute(
-        const TestContext(),
-        MessageEvent('hello'),
-      );
+      final result = action.execute(const TestContext(), MessageEvent('hello'));
 
       expect(result.context.message, equals('hello'));
     });
@@ -163,10 +158,7 @@ void main() {
     });
 
     test('does not modify context', () {
-      final action = sendTo<TestContext, TestEvent>(
-        'actor',
-        IncrementEvent(),
-      );
+      final action = sendTo<TestContext, TestEvent>('actor', IncrementEvent());
 
       final result = action.execute(
         const TestContext(count: 5),
