@@ -1,5 +1,7 @@
 # flutter_xstate
 
+[![Tests](https://github.com/epatel/flutter_xstate/actions/workflows/test.yml/badge.svg)](https://github.com/epatel/flutter_xstate/actions/workflows/test.yml)
+
 A state machine library for Flutter inspired by [XState](https://stately.ai/docs/xstate). Type-safe state machines with provider and go_router integration.
 
 ## Features
