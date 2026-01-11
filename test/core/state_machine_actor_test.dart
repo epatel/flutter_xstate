@@ -71,6 +71,8 @@ void main() {
     test('start can only be called once', () {
       final actor = machine.createActor();
       actor.start();
+      // ignore: avoid_print
+      print('(Expected warning below)');
       actor.start(); // Should not throw, just no-op
       expect(actor.started, isTrue);
     });
@@ -101,6 +103,8 @@ void main() {
   group('StateMachineActor.send', () {
     test('cannot send before start', () {
       final actor = machine.createActor();
+      // ignore: avoid_print
+      print('(Expected warning below)');
       actor.send(IncrementEvent());
       // Should be ignored, count stays at 0
       expect(actor.context.count, equals(0));
@@ -110,6 +114,8 @@ void main() {
       final actor = machine.createActor();
       actor.start();
       actor.stop();
+      // ignore: avoid_print
+      print('(Expected warning below)');
       actor.send(IncrementEvent());
       // Should be ignored
       expect(actor.context.count, equals(0));
@@ -200,6 +206,8 @@ void main() {
       actor.send(IncrementEvent()); // -> done, count = 1
 
       // Further sends should be ignored
+      // ignore: avoid_print
+      print('(Expected warning below)');
       actor.send(IncrementEvent());
       expect(actor.context.count, equals(1));
     });
