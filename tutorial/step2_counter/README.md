@@ -29,10 +29,9 @@ flutter run -d chrome
 ```mermaid
 stateDiagram-v2
     [*] --> active
-    active --> active : INCREMENT
-    active --> active : DECREMENT
+    active --> active : INCREMENT / DECREMENT
     active --> idle : RESET
-    idle --> active : INCREMENT
+    idle --> active : INCREMENT (start)
 ```
 
 ```
