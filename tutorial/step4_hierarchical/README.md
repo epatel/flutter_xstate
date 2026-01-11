@@ -29,6 +29,23 @@ flutter run -d chrome
 
 ## State Machine Structure
 
+```mermaid
+stateDiagram-v2
+    [*] --> stopped
+    stopped --> active : LOAD_TRACK
+
+    state active {
+        [*] --> paused
+        paused --> playing : PLAY
+        playing --> paused : PAUSE
+        playing --> playing : TICK
+    }
+
+    active --> stopped : STOP
+    active --> active : SEEK
+    active --> active : VOLUME
+```
+
 ```
 player
 ├── stopped (initial)

@@ -27,6 +27,18 @@ flutter run -d chrome
 
 ## State Machine Structure
 
+```mermaid
+stateDiagram-v2
+    [*] --> idle
+    idle --> idle : ADD_TODO
+    idle --> idle : REMOVE_TODO
+    idle --> idle : TOGGLE_TODO
+    idle --> idle : CLEAR_COMPLETED
+    idle --> editing : START_EDIT
+    editing --> idle : SAVE_EDIT
+    editing --> idle : CANCEL_EDIT
+```
+
 ```
 todo
 ├── idle (initial)

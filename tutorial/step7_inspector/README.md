@@ -41,6 +41,23 @@ This demonstrates the inspector's ability to send events for testing and debuggi
 
 ## State Machine Structure
 
+```mermaid
+stateDiagram-v2
+    [*] --> browsing
+    browsing --> browsing : ADD_ITEM
+    browsing --> browsing : REMOVE_ITEM
+    browsing --> checkout : CHECKOUT
+
+    state checkout {
+        [*] --> processing
+        processing --> success : PAYMENT_SUCCESS
+        processing --> failed : PAYMENT_FAILURE
+        failed --> processing : RETRY_PAYMENT
+    }
+
+    checkout --> browsing : CONTINUE_SHOPPING
+```
+
 ```
 cart (compound)
 ├── browsing (initial)

@@ -27,6 +27,18 @@ flutter run -d chrome
 
 ## State Machine Structure
 
+```mermaid
+stateDiagram-v2
+    [*] --> locked
+    locked --> unlocked : UNLOCK [correct PIN]
+    locked --> lockout : UNLOCK [wrong + max attempts]
+    locked --> locked : UNLOCK [wrong PIN]
+    locked --> unlocked : ADMIN_OVERRIDE
+    unlocked --> locked : LOCK
+    lockout --> locked : ADMIN_OVERRIDE
+    lockout --> locked : RESET
+```
+
 ```
 doorLock
 ├── locked (initial)

@@ -74,6 +74,20 @@ flutter run -d chrome
 
 ### Download Machine
 
+```mermaid
+stateDiagram-v2
+    [*] --> idle
+    idle --> downloading : START_DOWNLOAD
+    downloading --> downloading : DOWNLOAD_PROGRESS
+    downloading --> completed : DOWNLOAD_COMPLETE
+    downloading --> error : DOWNLOAD_FAILED
+    downloading --> idle : CANCEL_DOWNLOAD
+    completed --> idle : RESET_DOWNLOAD
+    completed --> downloading : START_DOWNLOAD
+    error --> downloading : RETRY_DOWNLOAD
+    error --> idle : RESET_DOWNLOAD
+```
+
 ```
 download
 ├── idle (initial)
@@ -92,6 +106,20 @@ download
 ```
 
 ### UI Machine
+
+```mermaid
+stateDiagram-v2
+    [*] --> browsing
+    browsing --> browsing : SELECT_FILE
+    browsing --> waitingForDownload : REQUEST_DOWNLOAD
+    waitingForDownload --> browsing : REQUEST_CANCEL
+    waitingForDownload --> showingResult : DOWNLOAD_COMPLETED
+    waitingForDownload --> showingError : DOWNLOAD_ERROR
+    showingResult --> browsing : DISMISS_DIALOG
+    showingResult --> browsing : SELECT_FILE
+    showingError --> waitingForDownload : REQUEST_RETRY
+    showingError --> browsing : RESET_UI
+```
 
 ```
 ui

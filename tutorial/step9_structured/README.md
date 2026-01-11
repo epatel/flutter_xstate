@@ -13,6 +13,25 @@ flutter run -d chrome
 
 This is a refactored version of Step 7 (Inspector), with the single `main.dart` split into a clean file structure.
 
+### State Machine Structure
+
+```mermaid
+stateDiagram-v2
+    [*] --> browsing
+    browsing --> browsing : ADD_ITEM
+    browsing --> browsing : REMOVE_ITEM
+    browsing --> checkout : CHECKOUT
+
+    state checkout {
+        [*] --> processing
+        processing --> success : PAYMENT_SUCCESS
+        processing --> failed : PAYMENT_FAILURE
+        failed --> processing : RETRY_PAYMENT
+    }
+
+    checkout --> browsing : CONTINUE_SHOPPING
+```
+
 ### File Structure
 
 ```

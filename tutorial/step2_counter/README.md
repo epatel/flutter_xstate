@@ -26,6 +26,15 @@ flutter run -d chrome
 
 ## State Machine Structure
 
+```mermaid
+stateDiagram-v2
+    [*] --> active
+    active --> active : INCREMENT
+    active --> active : DECREMENT
+    active --> idle : RESET
+    idle --> active : INCREMENT
+```
+
 ```
 counter
 ├── active (initial)

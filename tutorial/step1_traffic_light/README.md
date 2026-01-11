@@ -25,6 +25,14 @@ Click the **TIMER** button to cycle through the traffic light states:
 
 ## State Machine Structure
 
+```mermaid
+stateDiagram-v2
+    [*] --> red
+    red --> green : TIMER
+    green --> yellow : TIMER
+    yellow --> red : TIMER
+```
+
 ```
 trafficLight
 ├── red (initial)

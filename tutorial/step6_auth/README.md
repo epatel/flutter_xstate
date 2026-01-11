@@ -29,6 +29,23 @@ flutter run -d chrome
 
 ## State Machine Structure
 
+```mermaid
+stateDiagram-v2
+    [*] --> loggedOut
+
+    state loggedOut {
+        [*] --> idle
+        idle --> submitting : LOGIN_SUBMIT
+        submitting --> error : LOGIN_FAILURE
+        error --> idle : RETRY
+        error --> submitting : LOGIN_SUBMIT
+    }
+
+    loggedOut --> loggedIn : LOGIN_SUCCESS
+    loggedIn --> loggedOut : LOGOUT
+    loggedIn --> loggedOut : SESSION_EXPIRED
+```
+
 ```
 auth
 ├── loggedOut (compound)
