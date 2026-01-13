@@ -280,3 +280,30 @@ export 'src/devtools/state_machine_inspector.dart'
         InspectorExtension;
 export 'src/devtools/inspector_panel.dart'
     show StateMachineInspectorPanel, InspectorOverlay;
+
+// Navigator 2.0 Integration (alternative to go_router)
+export 'src/navigator/navigator.dart';
+export 'src/navigator/state_machine_page.dart'
+    show StateMachinePage, StateMachinePageRoute;
+export 'src/navigator/state_route_config.dart'
+    show
+        StateRouteConfig,
+        StatePageBuilder,
+        RouteGuard,
+        RouteRedirect,
+        ParamsToEvent,
+        ContextToParams;
+export 'src/navigator/state_machine_router_delegate.dart'
+    show StateMachineRouterDelegate, StateMachineActorRouterExtension;
+export 'src/navigator/route_information_parser.dart'
+    show StateMachineRouteInformationParser, SimpleRouteInformationParser;
+export 'src/navigator/state_machine_navigator.dart'
+    show
+        StateMachineNavigator,
+        StateMachineNavigatorFactory,
+        Navigator2Provider,
+        NavigatorContextExtension;
+export 'src/navigator/transitions.dart'
+    show PageTransitionBuilder, StateMachineTransitions;
+export 'src/navigator/scoped_page.dart'
+    show ScopedMachine, ScopedMachinePage, RestoredMachine, SyncedMachine;

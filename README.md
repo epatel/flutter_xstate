@@ -307,6 +307,7 @@ Learn step-by-step with the included tutorials:
 | 7 | [Inspector](tutorial/step7_inspector/) | Visual debugging panel |
 | 8 | [Multi-Machine](tutorial/step8_multi_machine/) | Multiple machines communicating |
 | 9 | [Structured](tutorial/step9_structured/) | Project organization patterns |
+| 10 | [Navigator 2.0](tutorial/step10_navigator/) | Custom transitions, deep linking |
 
 Run any tutorial:
 
@@ -356,11 +357,20 @@ flutter run -d chrome
 - `StateMachineListener` - Listen for changes
 - `StateMachineConsumer` - Builder + Listener
 
-### Router
+### Router (go_router)
 
 - `StateMachineRefreshListenable` - Trigger router refresh
 - `redirectWhenMatches()`, `redirectWhenNotMatches()`, `redirectWhenContext()`
 - `RouteScopedMachine` - Route lifecycle management
+
+### Navigator 2.0 (alternative to go_router)
+
+- `StateMachineNavigator` - High-level navigation API
+- `StateMachineRouterDelegate` - Navigator 2.0 RouterDelegate
+- `StateMachineRouteInformationParser` - Deep linking parser
+- `StateRouteConfig` - Declarative state-to-route mapping
+- `StateMachinePage` - Custom Page with transitions
+- `StateMachineTransitions` - Pre-built transitions (fade, slide, scale)
 
 ### DevTools
 
